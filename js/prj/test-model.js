@@ -40,5 +40,7 @@ function handleClick()
     k.display();
     var l = model.addAssertion(w,'rdf:type',f);
     l.display();    
+    var m = model.addAssertion(j,':dateOfBirth','1970-07-24');
+    m.display();
 }
 

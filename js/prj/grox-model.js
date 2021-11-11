@@ -86,7 +86,8 @@ grox.Model =
 						if (QName.indexOf(":") == QName.length - 1)  {throw new Error("When adding a signifier, at least one additional character must follow the colon in QName string.");} 				
 						
 						if (!prefLabel) {
-							prefLabel = QName.split(":")[1];
+							if (QName.indexOf(":") == 0)  {prefLabel = QName.substring(1);} 
+							else {prefLabel = QName.split(":")[1];}
 						}
 			
 						_QName = QName;
@@ -119,7 +120,8 @@ grox.Model =
 						// private to each _Assertion instance
 						let _subject;
 						let _predicate;
-						let _object;
+						let _objectSignifier;
+						let _objectLiteral;
 						let _predicateLabel;
 			
 						this.getSubject = function() 
@@ -139,11 +141,8 @@ grox.Model =
 			
 						this.getObject = function() 
 						{
-							return _object;
-						};
-						this.setObject = function(newObject) 
-						{
-							_object = newObject;
+							if (_objectSignifier) {return _objectSignifier;}
+							if (_objectLiteral) {return _objectLiteral;}							
 						};
 			
 						// _Assertion constructor code
@@ -178,41 +177,43 @@ grox.Model =
 						{
 							if (typeof predicate == 'string')
 							{
-								_predicate = _thisModel.addSignifier(predicate,predicate);
+								_predicate = _thisModel.addSignifier(predicate, altPredicateLabel );
 							}
 						}
 						if (!_predicate) {throw new Error("Invalid predicate for new Assertion, " + predicate + ".");}
 			
 						if (_thisModel.isSignifier(object)) 
 						{
-							_object = object;
+							_objectSignifier = object;
 						} 
-						if (!_object) 
+						if (!_objectSignifier) 
 						{
 							var testObject = _thisModel.getSignifier(object);
-							if (testObject) {_object = testObject;}
+							if (testObject) {_objectSignifier = testObject;}
 						}
-						if (!_object)
+						if (!_objectSignifier)
 						{
 							// if object string has one colon, assume the caller wants it to be a new Signifier
 							if (typeof object == 'string' && object.indexOf(":") >= 0 && object.lastIndexOf(":") == object.indexOf(":"))
 							{
-								_object = _thisModel.addSignifier(object);
+								_objectSignifier = _thisModel.addSignifier(object);
 							}
 						}
-						if (!_object) 
+						if (!_objectSignifier) 
 						{
-							_object = object;
+							// if object string is any other string, then store it as a string literal
+							if (typeof object == 'string')
+							_objectLiteral = object;
 						}
-						if (!_object) {throw new Error("Invalid object for new Assertion, " + object + ".");}
+						if (!_objectSignifier && !_objectLiteral) {throw new Error("Invalid object for new Assertion, " + object + ".");}
 			
 						_predicateLabel = _constructPredicateLabel(_predicate,altPredicateLabel);
 			
 						_subject.notifyOfParticipationAsSubject(this);
 						_predicate.notifyOfParticipationAsPredicate(this);
-						if (_thisModel.isSignifier(_object)) 
+						if (_thisModel.isSignifier(_objectSignifier)) 
 						{
-							_object.notifyOfParticipationAsObject(this);
+							_objectSignifier.notifyOfParticipationAsObject(this);
 						}
 					}
 			
@@ -253,11 +254,11 @@ grox.Model =
 					let testObject = this.getObject();
 					if (_isSignifier(testObject))
 					{
-						msg = msg + testObject.getPrefLabel();
+						msg += testObject.getPrefLabel();
 					}
 					else
 					{
-						msg = msg + testObject.toString();
+						msg += testObject.toString();
 					}
 					console.log(msg);
 				}
