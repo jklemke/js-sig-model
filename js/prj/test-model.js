@@ -14,7 +14,8 @@ function handleClick()
     model.addNamespace('skos','http://www.w3.org/2004/02/skos/core#');
     model.addNamespace('grox','http://www.grox.info/');
     
-    model.addSignifier('rdf:type','isA');
+    model.addSignifier('rdf:type','isSpecimenOfSpecies');
+    model.addSignifier('skos:related','isRelatedTo');
 
     let r = model.getSignifier('rdf:type');
     r.display();
@@ -23,7 +24,7 @@ function handleClick()
     s.display();
     var w = model.addSignifier('grox:Wally','Wallace');
     w.display();
-    var t = model.addTriple(':Bob','rdf:type',':Father');
+    var t = model.addAssertion(':Bob','rdf:type',':Father');
     t.display();
     var b = model.getSignifier(':Bob');
     if (b) {b.display()}
@@ -31,13 +32,13 @@ function handleClick()
     if (b2) {b2.display()}
     var f = model.getSignifier(':Father');
     if (f) {f.display()}
-    var z = model.addTriple(':Smurf','skos:related',':Munchkin');
+    var z = model.addAssertion(':Smurf','skos:related',':Munchkin'); 
     z.display();
     var j = model.addSignifier(':Jimmy','Jimmy');
     j.display();
-    var k = model.addTriple(j,'rdf:type',':Father');
+    var k = model.addAssertion(j,'rdf:type',':Father');
     k.display();
-    var l = model.addTriple(w,'rdf:type',f);
+    var l = model.addAssertion(w,'rdf:type',f);
     l.display();    
 }
 

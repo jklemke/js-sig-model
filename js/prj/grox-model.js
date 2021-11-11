@@ -15,7 +15,7 @@ grox.Model =
 		{
 			// private attributes, unique to each Model instance
 			let _namespaces = {};
-			let _triples = [];
+			let _assertions = [];
 			let _signifiers = {};
 			let _thisModel = this;
 
@@ -30,27 +30,27 @@ grox.Model =
 						// private to each _Signifier instance
 						let _QName;
 						let _prefLabel;
-						let _triplesWithThisAsSubject = [];
-						let _triplesWithThisAsPredicate = [];
-						let _triplesWithThisAsObject = [];
+						let _assertionsWithThisAsSubject = [];
+						let _assertionsWithThisAsPredicate = [];
+						let _assertionsWithThisAsObject = [];
 			
-						this.notifyOfParticipationAsSubject = function(triple) 
+						this.notifyOfParticipationAsSubject = function(assertion) 
 						{
-							_triplesWithThisAsSubject.push(triple);
-							if (triple.getPredicateLabel() != undefined)
+							_assertionsWithThisAsSubject.push(assertion);
+							if (assertion.getPredicateLabel() != undefined)
 							{
-								this[triple.getPredicateLabel()] = triple.getObject();
+								this[assertion.getPredicateLabel()] = assertion.getObject();
 							}
 						};
 			
-						this.notifyOfParticipationAsPredicate = function(triple) 
+						this.notifyOfParticipationAsPredicate = function(assertion) 
 						{
-							_triplesWithThisAsPredicate.push(triple);
+							_assertionsWithThisAsPredicate.push(assertion);
 						};
 			
-						this.notifyOfParticipationAsObject = function(triple) 
+						this.notifyOfParticipationAsObject = function(assertion) 
 						{
-							_triplesWithThisAsObject.push(triple);
+							_assertionsWithThisAsObject.push(assertion);
 						};
 			
 						this.getQName = function() 
@@ -63,19 +63,19 @@ grox.Model =
 							return _prefLabel;
 						};
 			
-						this.getTriplesWithThisAsSubject = function() 
+						this.getAssertionsWithThisAsSubject = function() 
 						{
-							return _triplesWithThisAsSubject;
+							return _assertionsWithThisAsSubject;
 						};
 			
-						this.getTriplesWithThisAsPredicate = function() 
+						this.getAssertionsWithThisAsPredicate = function() 
 						{
-							return _triplesWithThisAsPredicate;
+							return _assertionsWithThisAsPredicate;
 						};
 						
-						this.getTriplesWithThisAsObject = function() 
+						this.getAssertionsWithThisAsObject = function() 
 						{
-							return _triplesWithThisAsObject;
+							return _assertionsWithThisAsObject;
 						};
 			
 						// _Signifier constructor code
@@ -95,7 +95,7 @@ grox.Model =
 				}
 			)();
 			
-			// private method for Model
+			// private method for _Model
 			let _isSignifier = function(value)
 			{
 				if(value == undefined || typeof value != "object") 
@@ -109,14 +109,14 @@ grox.Model =
 				return true;
 			}
 
-			// _Triple is an IIFE constructor function which is private to Model
-			let _Triple = 
+			// _Assertion is an IIFE constructor function which is private to Model
+			let _Assertion = 
 			(
 				function () 
 				{
 					return function(subject,predicate,object,altPredicateLabel) 
 					{
-						// private to each _Triple instance
+						// private to each _Assertion instance
 						let _subject;
 						let _predicate;
 						let _object;
@@ -146,7 +146,7 @@ grox.Model =
 							_object = newObject;
 						};
 			
-						// _Triple constructor code
+						// _Assertion constructor code
 						if (_isSignifier(subject))
 						{
 							_subject = subject;
@@ -163,7 +163,7 @@ grox.Model =
 								_subject = _thisModel.addSignifier(subject,subject);
 							}
 						}
-						if (!_subject) {throw new Error("Invalid subject for new Triple, " + subject + ".");}
+						if (!_subject) {throw new Error("Invalid subject for new Assertion, " + subject + ".");}
 						
 						if (_thisModel.isSignifier(predicate)) 
 						{
@@ -181,7 +181,7 @@ grox.Model =
 								_predicate = _thisModel.addSignifier(predicate,predicate);
 							}
 						}
-						if (!_predicate) {throw new Error("Invalid predicate for new Triple, " + predicate + ".");}
+						if (!_predicate) {throw new Error("Invalid predicate for new Assertion, " + predicate + ".");}
 			
 						if (_thisModel.isSignifier(object)) 
 						{
@@ -194,7 +194,7 @@ grox.Model =
 						}
 						if (!_object)
 						{
-							// if object string has one colon, assume the caller wants it to be a new resource
+							// if object string has one colon, assume the caller wants it to be a new Signifier
 							if (typeof object == 'string' && object.indexOf(":") >= 0 && object.lastIndexOf(":") == object.indexOf(":"))
 							{
 								_object = _thisModel.addSignifier(object);
@@ -204,7 +204,7 @@ grox.Model =
 						{
 							_object = object;
 						}
-						if (!_object) {throw new Error("Invalid object for new Triple, " + object + ".");}
+						if (!_object) {throw new Error("Invalid object for new Assertion, " + object + ".");}
 			
 						_predicateLabel = _constructPredicateLabel(_predicate,altPredicateLabel);
 			
@@ -234,7 +234,7 @@ grox.Model =
 
 			_Signifier.prototype = 
 			{
-				// public, non-privileged methods (one copy for all _Signifier objects)
+				// public, non-privileged methods (one copy for all _Signifiers)
 				// used with "this" to call object-specific methods, but has no access to private attributes or methods
 				display: function() 
 				{
@@ -243,8 +243,10 @@ grox.Model =
 			};
 
 						
-			_Triple.prototype = 
+			_Assertion.prototype = 
 			{
+				// public, non-privileged methods (one copy for all _Assertions)
+				// used with "this" to call object-specific methods, but has no access to private attributes or methods
 				display: function() 
 				{
 					let msg  = "subject  " + this.getSubject().getPrefLabel() + "\npredicate  " + this.getPredicate().getPrefLabel()  + "\nobject  ";
@@ -269,11 +271,11 @@ grox.Model =
 				_namespaces[prefix] = URI;
 			}
 
-			this.addTriple = function(subject,predicate,object,altPredicateLabel)
+			this.addAssertion = function(subject,predicate,object,altPredicateLabel)
 			{
-				let newTriple = new _Triple(subject,predicate,object,altPredicateLabel);
-				_triples.push(newTriple);
-				return newTriple;
+				let newAssertion = new _Assertion(subject,predicate,object,altPredicateLabel);
+				_assertions.push(newAssertion);
+				return newAssertion;
 			};
 
 			this.addSignifier = function(QName,prefLabel)
@@ -326,6 +328,5 @@ grox.Model.prototype =
 {
 };
 
-//grox.model = new grox.Model();
 
  
