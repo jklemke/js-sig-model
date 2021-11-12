@@ -116,8 +116,8 @@ grox.Model =
 
 			// _Fact is an IIFE constructor function which is private to Model
 			// _Fact is an in-memory physical structure of triples (subject, predicate, object)
-			// depending on the nature of the predicate the same fact might be expressed by multiple assertions, for example
-			// the fact/triple giraffe,rdfs:subClassOf, mammal might be asserted as
+			// Depending on the nature of the predicate the same fact might be expressed by multiple assertions, for example
+			// the fact (triple) giraffe,rdfs:subClassOf, mammal might be asserted as
 			// giraffe isSubclassOfSuperclass mammal or
 			// mammal isSuperclassOfSubclass giraffe
 			let _Fact = 

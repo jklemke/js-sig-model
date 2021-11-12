@@ -47,5 +47,10 @@ function handleClick()
     var o = model.getSignifier(':dateOfBirth');
     if (o) {o.log()}
         
+    var jAssertions = j.getAssertionsWithThisAsSubject(); 
+    jAssertions.forEach(element => {
+        element.log();        
+    });
+    
 }
 
