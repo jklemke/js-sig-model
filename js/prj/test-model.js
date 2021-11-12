@@ -18,34 +18,34 @@ function handleClick()
     model.addSignifier('skos:related','isRelatedTo');
 
     let r = model.getSignifier('rdf:type');
-    r.display();
+    r.log();
     var s = model.addSignifier(':Sam');
     var s = model.addSignifier(':Sam');
-    s.display();
+    s.log();
     var w = model.addSignifier('grox:Wally','Wallace');
-    w.display();
+    w.log();
     var t = model.addAssertion(':Bob','rdf:type',':Father');
-    t.display();
+    t.log();
     var b = model.getSignifier(':Bob');
-    if (b) {b.display()}
+    if (b) {b.log()}
     var b2 = model.getSignifier(b);
-    if (b2) {b2.display()}
+    if (b2) {b2.log()}
     var f = model.getSignifier(':Father');
-    if (f) {f.display()}
+    if (f) {f.log()}
     var z = model.addAssertion(':Smurf','skos:related',':Munchkin'); 
-    z.display();
+    z.log();
     var j = model.addSignifier(':Jimmy','Jimmy');
-    j.display();
+    j.log();
     var k = model.addAssertion(j,'rdf:type',':Father');
-    k.display();
+    k.log();
     var l = model.addAssertion(w,'rdf:type',f);
-    l.display();    
+    l.log();    
     var m = model.addAssertion(j,':dateOfBirth','1970-07-24');
-    m.display();
+    m.log();
     var n = model.getSignifier('skos:related');
-    if (n) {n.display()}
+    if (n) {n.log()}
     var o = model.getSignifier(':dateOfBirth');
-    if (o) {o.display()}
+    if (o) {o.log()}
         
 }
 

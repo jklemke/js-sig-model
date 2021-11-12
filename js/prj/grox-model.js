@@ -15,7 +15,7 @@ grox.Model =
 		{
 			// private attributes, unique to each Model instance
 			let _namespaces = {};
-			let _assertions = [];
+			let _facts = [];
 			let _signifiers = {};
 			let _thisModel = this;
 
@@ -30,27 +30,27 @@ grox.Model =
 						// private to each _Signifier instance
 						let _QName;
 						let _prefLabel;
-						let _assertionsWithThisAsSubject = [];
-						let _assertionsWithThisAsPredicate = [];
-						let _assertionsWithThisAsObject = [];
+						let _factsWithThisAsSubject = [];
+						let _facstWithThisAsPredicate = [];
+						let _factsWithThisAsObject = [];
 			
-						this.notifyOfParticipationAsSubject = function(assertion) 
+						this.notifyOfParticipationAsSubject = function(fact) 
 						{
-							_assertionsWithThisAsSubject.push(assertion);
-							if (assertion.getPredicateLabel() != undefined)
+							_factsWithThisAsSubject.push(fact);
+							if (fact.getPredicateLabel() != undefined)
 							{
-								this[assertion.getPredicateLabel()] = assertion.getObject();
+								this[fact.getPredicateLabel()] = fact.getObject();
 							}
 						};
 			
-						this.notifyOfParticipationAsPredicate = function(assertion) 
+						this.notifyOfParticipationAsPredicate = function(fact) 
 						{
-							_assertionsWithThisAsPredicate.push(assertion);
+							_facstWithThisAsPredicate.push(fact);
 						};
 			
-						this.notifyOfParticipationAsObject = function(assertion) 
+						this.notifyOfParticipationAsObject = function(fact) 
 						{
-							_assertionsWithThisAsObject.push(assertion);
+							_factsWithThisAsObject.push(fact);
 						};
 			
 						this.getQName = function() 
@@ -62,20 +62,24 @@ grox.Model =
 						{
 							return _prefLabel;
 						};
-			
+
+						// TODO: these get statements are the beginning of a SELECT API
+						// there may be multiple assertions for a single fact/triple
 						this.getAssertionsWithThisAsSubject = function() 
 						{
-							return _assertionsWithThisAsSubject;
+							return _factsWithThisAsSubject;
 						};
 			
+						// there may be multiple assertions for a single fact/triple
 						this.getAssertionsWithThisAsPredicate = function() 
 						{
-							return _assertionsWithThisAsPredicate;
+							return _facstWithThisAsPredicate;
 						};
 						
+						// there may be multiple assertions for a single fact/triple
 						this.getAssertionsWithThisAsObject = function() 
 						{
-							return _assertionsWithThisAsObject;
+							return _factsWithThisAsObject;
 						};
 			
 						// _Signifier constructor code
@@ -110,14 +114,19 @@ grox.Model =
 				return true;
 			}
 
-			// _Assertion is an IIFE constructor function which is private to Model
-			let _Assertion = 
+			// _Fact is an IIFE constructor function which is private to Model
+			// _Fact is an in-memory physical structure of triples (subject, predicate, object)
+			// depending on the nature of the predicate the same fact might be expressed by multiple assertions, for example
+			// the fact/triple giraffe,rdfs:subClassOf, mammal might be asserted as
+			// giraffe isSubclassOfSuperclass mammal or
+			// mammal isSuperclassOfSubclass giraffe
+			let _Fact = 
 			(
 				function () 
 				{
 					return function(subject,predicate,object,altPredicateLabel) 
 					{
-						// private to each _Assertion instance
+						// private to each _Fact instance
 						let _subject;
 						let _predicate;
 						let _objectSignifier;
@@ -145,7 +154,7 @@ grox.Model =
 							if (_objectLiteral) {return _objectLiteral;}							
 						};
 			
-						// _Assertion constructor code
+						// _Fact constructor code
 						if (_isSignifier(subject))
 						{
 							_subject = subject;
@@ -237,18 +246,18 @@ grox.Model =
 			{
 				// public, non-privileged methods (one copy for all _Signifiers)
 				// used with "this" to call object-specific methods, but has no access to private attributes or methods
-				display: function() 
+				log: function() 
 				{
 					console.log("Signifier = " + this.getQName());
 				}
 			};
 
 						
-			_Assertion.prototype = 
+			_Fact.prototype = 
 			{
-				// public, non-privileged methods (one copy for all _Assertions)
+				// public, non-privileged methods (one copy for all _Facts)
 				// used with "this" to call object-specific methods, but has no access to private attributes or methods
-				display: function() 
+				log: function() 
 				{
 					let msg  = "subject  " + this.getSubject().getPrefLabel() + "\npredicate  " + this.getPredicate().getPrefLabel()  + "\nobject  ";
 					let testObject = this.getObject();
@@ -275,8 +284,8 @@ grox.Model =
 			this.addAssertion = function(subject,predicate,object,altPredicateLabel)
 			{
 				//TODO: check if assertion already exists
-				let newAssertion = new _Assertion(subject,predicate,object,altPredicateLabel);
-				_assertions.push(newAssertion);
+				let newAssertion = new _Fact(subject,predicate,object,altPredicateLabel);
+				_facts.push(newAssertion);
 				return newAssertion;
 			};
 
