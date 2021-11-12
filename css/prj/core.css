@@ -1,14 +1,12 @@
-@import url("header.css");
-@import url("list.css");
-@import url("table.css"); 
-@import url("media.css");
-@import url("font.css");
-@import url("article.css");
-@import url("paragraph.css");
+@import "header.css";
+@import "list.css";
+@import "table.css"; 
+@import "font.css";
+@import "paragraph.css";
 
 /* Color CSS, uncomment if desired for debugging
    ========================================================================== */
-/*@import url("debug-color.css");*/
+/*@import "debug-color.css";*/
       
 /* Generic Elements 
    ========================================================================== */
