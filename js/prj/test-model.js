@@ -42,5 +42,10 @@ function handleClick()
     l.display();    
     var m = model.addAssertion(j,':dateOfBirth','1970-07-24');
     m.display();
+    var n = model.getSignifier('skos:related');
+    if (n) {n.display()}
+    var o = model.getSignifier(':dateOfBirth');
+    if (o) {o.display()}
+        
 }
 

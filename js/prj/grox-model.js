@@ -159,7 +159,7 @@ grox.Model =
 						{
 							if (typeof subject == 'string')
 							{
-								_subject = _thisModel.addSignifier(subject,subject);
+								_subject = _thisModel.addSignifier(subject);
 							}
 						}
 						if (!_subject) {throw new Error("Invalid subject for new Assertion, " + subject + ".");}
@@ -274,6 +274,7 @@ grox.Model =
 
 			this.addAssertion = function(subject,predicate,object,altPredicateLabel)
 			{
+				//TODO: check if assertion already exists
 				let newAssertion = new _Assertion(subject,predicate,object,altPredicateLabel);
 				_assertions.push(newAssertion);
 				return newAssertion;

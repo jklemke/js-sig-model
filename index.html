@@ -1,66 +1,85 @@
 ﻿<!DOCTYPE html>
 <html class="no-js" lang="en">
-	<head>
-		<meta charset="UTF-8">
-		<title>Grox Triple Store Test</title>
-		<meta name="description" content="test page for grox-triple.js">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<meta name="og:url" content="https://grox.info/">
-		<meta name="og:title" content="grox.info">
-		<meta name="og:type" content="website">
-		<meta name="og:description" content="test page for grox-triple.js">
-		<meta name="og:image" content="https://grox.info/img/Grox3.gif">
-		<link rel="manifest" href="site.webmanifest">
-		<link rel="apple-touch-icon" href="icon.png">
-		<link rel="stylesheet" href="/css/lib/normalize.css">
-		<link rel="stylesheet" href="/css/lib/boilerplate.css">
-		<link rel="stylesheet" href="/css/prj/core.css" type="text/css">
-		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sumana">
-		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Palanquin Dark">
-		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Otomanopee One">
-		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source Code Pro">
-		<link rel="stylesheet" media="screen" href="https://fontlibrary.org//face/go-mono" type="text/css"/>
-		<link rel="author" href="humans.txt" />
-		<meta name="theme-color" content="#fafafa">  
-	</head>
-	<body id="body">
+<head>
+  <meta charset="UTF-8">
+  <title>grox.info token</title>
+  <meta name="description" content="grox.info is an experiment in creating a knowledge graph for model theory vocabulary">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="og:url" content="https://grox.info/">
+  <meta name="og:title" content="grox.info">
+  <meta name="og:type" content="website">
+  <meta name="og:description" content="grox.info is an experiment in creating a knowledge graph for model theory vocabulary">
+  <meta name="og:image" content="https://grox.info/img/Grox3.gif">
+  <link rel="manifest" href="site.webmanifest">
+  <link rel="apple-touch-icon" href="icon.png">
+  <link rel="stylesheet" href="css/lib/normalize.css" type="text/css" >
+  <link rel="stylesheet" href="css/lib/boilerplate.css" type="text/css" >
+  <link rel="stylesheet" href="css/prj/core.css" type="text/css" >
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Sumana">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Palanquin Dark">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Otomanopee One">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source Code Pro">
+  <link rel="stylesheet" href="https://fontlibrary.org//face/go-mono" media="screen" type="text/css" />
+  <link rel="author" href="humans.txt" />
+  <meta name="theme-color" content="#fafafa">  
+</head>
+<body>
+  <header>
+    <h1>grox.info model theory glossary</h1>
+    <nav>
+			<ul class="navlist">
+				<li><a href="/">Home</a></li>
+				<li><a href="#">nav 2</a></li>
+			</ul>
+		</nav>
+  </header>
+    <main>
+      <p>grox.info is an experiment in creating a knowledge graph for the vocabulary of model theory, first order logic, semantic web and similar attempts to formalize semantics.</p>
+	  <input type="submit" value="Create Resources" onclick="handleClick();"/>
+	  <section>
+        <header>
+          <h1>Model Theory Vocabulary</h1>
+        </header>
+        <dl>
+          <dt><a href="0.0.0-a.1/BT2y5FG6rnmlTkA5DoDZeLWp/en">token</a></dt><dd>a word, a phoneme, a sequence of characters</dd>
+          <dt><a href="table-examples.html">tables</a></dt><dd>Examples of HTML tables as data structures</dd>
+        </dl>      
+      </section>
+      <section>
+        <header>
+          <h1>SKOS Concept Scheme</h1>
+          <p>let's talk about SKOS</p>
+        </header>
+      </section>
+    </main>
+  <aside>		
 		<header>
-			<h1>grox.info model theory glossary</h1>
+			<h1>Aside</h1>
 			<nav>
 				<ul class="navlist">
-					<li><a href="/">Home</a></li>
-					<li><a href="#">nav 2</a></li>
+					<li><a href="#">Link1</a></li>
+					<li><a href="#">Link2</a></li>
 				</ul>
 			</nav>
 		</header>
-		<main>
-			<p>basic test page for grox-triple.js</p>
-			<section>
-				<h1>Triple Store Test</h1>
-				<input type="submit" value="Create Resources" onclick="handleClick();"/>
-			</section>
-		</main>
-		<aside>
-			<header>
-				<h1>Aside</h1>
-				<nav>
-					<ul class="navlist">
-						<li><a href="#">Link1</a></li>
-						<li><a href="#">Link2</a></li>
-					</ul>
-				</nav>
-			</header>
-			<ul class="asidelist">
-				<li>Aside item</li>
-				<li>Aside item</li>
-				
-				<li>Aside item</li>
-			</ul>	
-		</aside>
-		<footer>
-			<small>Copyright &copy; <time datetime="2014">2021</time> grox LLC</small>
-		</footer>
-		<script src="js/prj/grox-model.js"></script>
-		<script src="js/prj/test-model.js"></script>
-	</body>
+		<ul class="asidelist">
+			<li>Aside item</li>
+			<li>Aside item</li>
+			<li>Aside item</li>
+		</ul>			
+	</aside>
+	<footer>	
+		<small>Copyright &copy; <time datetime="2014">2021</time> grox LLC</small>
+	</footer>
+  <script src="js/lib/modernizr-3.11.2.min.js"></script>
+  <script src="js/lib/plugins.js"></script>
+  <script src="js/prj/grox-model.js"></script>
+  <script src="js/prj/test-model.js"></script>
+  <script>
+    window.ga = function () { ga.q.push(arguments) }; ga.q = []; ga.l = +new Date;
+    ga('create', 'UA-210857385-1', 'auto'); ga('set', 'anonymizeIp', true); ga('set', 'transport', 'beacon'); ga('send', 'pageview')
+  </script>
+  <script src="https://www.google-analytics.com/analytics.js" async></script>
+</body>
 </html>
+ 
