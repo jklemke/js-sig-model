@@ -13,8 +13,9 @@ function handleClick()
     model.addNamespace('xsd','http://www.w3.org/2001/XMLSchema#');
     model.addNamespace('skos','http://www.w3.org/2004/02/skos/core#');
     model.addNamespace('grox','http://www.grox.info/');
-    
-    model.addSignifier('rdf:type','isSpecimenOfSpecies');
+    model.addNamespace('foaf','http://xmlns.com/foaf/0.1/');
+
+    model.addSignifier('rdf:type','isA');
     model.addSignifier('skos:related','isRelatedTo');
 
     let r = model.getSignifier('rdf:type');
@@ -24,9 +25,9 @@ function handleClick()
     s.log();
     var w = model.addSignifier('grox:Wally','Wallace');
     w.log();
-    var t = model.addAssertion(':Bob','rdf:type',':Father');
+    var t = model.addAssertion(':Eric','rdf:type',':Father');
     t.log();
-    var b = model.getSignifier(':Bob');
+    var b = model.getSignifier(':Eric');
     if (b) {b.log()}
     var b2 = model.getSignifier(b);
     if (b2) {b2.log()}
@@ -44,13 +45,64 @@ function handleClick()
     m.log();
     var n = model.getSignifier('skos:related');
     if (n) {n.log()}
-    var o = model.getSignifier(':dateOfBirth');
-    if (o) {o.log()}
+
+    var c = model.addAssertion(':Carmen','rdf:type',':Mother');
+    c.log();
+
         
+    console.log('Jimmy as subject ----------------------------------------');
     var jAssertions = j.getAssertionsWithThisAsSubject(); 
     jAssertions.forEach(element => {
         element.log();        
     });
-    
+
+    console.log('Father as object ----------------------------------------');
+    var fAssertions = f.getAssertionsWithThisAsObject(); 
+    fAssertions.forEach(element => {
+        element.log();        
+    });
+
+    console.log('rdf:type as predicate ----------------------------------------');
+    var rAssertions = r.getAssertionsWithThisAsPredicate(); 
+    rAssertions.forEach(element => {
+        element.log();        
+    });
+
+    // TODO: add logic in the model for each of these grox.info predicates
+    model.addSignifier('grox:hasTrait'); // hasTrait disallows bidirectionality. enforces asymmetry of subject and object
+
+
+    let aaaIsRed = model.addAssertion('grox:AAA','grox:hasTrait','red'); 
+    let aaa = model.getSignifier('grox:AAA');
+
+    let bbb = model.addSignifier('grox:BBB','bob');
+    let ccc = model.addSignifier('grox:CCC','carmen');
+    let ddd = model.addSignifier('grox:DDD','diego');
+
+    model.addAssertion(aaa,'grox:hasTrait','square'); 
+    model.addAssertion(ccc,'grox:hasTrait','red'); 
+
+    console.log('AAA as subject -------------------------------------');
+
+    (aaa.getAssertionsWithThisAsSubject()).forEach( element => {
+      element.log();
+      }
+    )
+
+    console.log('red as predicate ----------------------------------------');
+    // TODO: do we want functionality like this?
+    var redAssertions = model.getAssertionsWithLiteralAsPredicate('red'); 
+    redAssertions.forEach(element => {
+        element.log();        
+    });
+
+    console.log('red as predicate, AAA as subject with alice prefLabel ---------------------------');
+    aaa.setPrefLabel('alice');
+    redAssertions.forEach(element => {
+        element.log();        
+    });
+
+
+
 }
 

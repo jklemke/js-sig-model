@@ -31,7 +31,7 @@ grox.Model =
 						let _QName;
 						let _prefLabel;
 						let _factsWithThisAsSubject = [];
-						let _facstWithThisAsPredicate = [];
+						let _factsWithThisAsPredicate = [];
 						let _factsWithThisAsObject = [];
 			
 						this.notifyOfParticipationAsSubject = function(fact) 
@@ -45,7 +45,7 @@ grox.Model =
 			
 						this.notifyOfParticipationAsPredicate = function(fact) 
 						{
-							_facstWithThisAsPredicate.push(fact);
+							_factsWithThisAsPredicate.push(fact);
 						};
 			
 						this.notifyOfParticipationAsObject = function(fact) 
@@ -63,6 +63,12 @@ grox.Model =
 							return _prefLabel;
 						};
 
+						this.setPrefLabel = function(prefLabel) 
+						{
+							_prefLabel =prefLabel;
+							return _prefLabel;
+						};
+
 						// TODO: these get statements are the beginning of a SELECT API
 						// there may be multiple assertions for a single fact/triple
 						this.getAssertionsWithThisAsSubject = function() 
@@ -73,7 +79,7 @@ grox.Model =
 						// there may be multiple assertions for a single fact/triple
 						this.getAssertionsWithThisAsPredicate = function() 
 						{
-							return _facstWithThisAsPredicate;
+							return _factsWithThisAsPredicate;
 						};
 						
 						// there may be multiple assertions for a single fact/triple
@@ -274,7 +280,7 @@ grox.Model =
 			};		
 			
 			
-			// privileged methods (defined with "this.", public, unique to each Model instance, with access to private attributes and methods)
+			// _Model privileged methods (defined with "this.", public, unique to each Model instance, with access to private attributes and methods)
 			this.addNamespace = function(prefix,URI)
 			{
 				if (prefix.indexOf(":") >= 0) {throw new Error("When adding a namespacePrefix, a colon is not allowed in the prefix name.  Specified prefix was " + prefix);}
@@ -328,6 +334,18 @@ grox.Model =
 				return _isSignifier(resourceID);
 			}
 
+			this.getAssertionsWithLiteralAsPredicate = function(literal) 
+			{
+				let selectedFacts = [];
+				if (typeof literal == "string") {
+					_facts.forEach(element => {
+						if (element.getObject() == literal){
+							selectedFacts.push(element);
+						}	
+					});
+				}
+				return selectedFacts;
+			}
 
 			// constructor code for Model (runs once when the object is instantiated with "new")
 			// ------------------------------
