@@ -15,7 +15,7 @@ grox.Model =
 		{
 			// private attributes, unique to each Model instance
 			let _namespaces = {};
-			let _facts = [];
+			let _axioms = [];
 			let _signifiers = {};
 			let _thisModel = this;
 
@@ -30,27 +30,27 @@ grox.Model =
 						// private to each _Signifier instance
 						let _QName;
 						let _prefLabel;
-						let _factsWithThisAsSubject = [];
-						let _factsWithThisAsPredicate = [];
-						let _factsWithThisAsObject = [];
+						let _axiomsWithThisAsSubject = [];
+						let _axiomsWithThisAsPredicate = [];
+						let _axiomsWithThisAsObject = [];
 			
-						this.notifyOfParticipationAsSubject = function(fact) 
+						this.notifyOfParticipationAsSubject = function(axiom) 
 						{
-							_factsWithThisAsSubject.push(fact);
-							if (fact.getPredicateLabel() != undefined)
+							_axiomsWithThisAsSubject.push(axiom);
+							if (axiom.getPredicateLabel() != undefined)
 							{
-								this[fact.getPredicateLabel()] = fact.getObject();
+								this[axiom.getPredicateLabel()] = axiom.getObject();
 							}
 						};
 			
-						this.notifyOfParticipationAsPredicate = function(fact) 
+						this.notifyOfParticipationAsPredicate = function(axiom) 
 						{
-							_factsWithThisAsPredicate.push(fact);
+							_axiomsWithThisAsPredicate.push(axiom);
 						};
 			
-						this.notifyOfParticipationAsObject = function(fact) 
+						this.notifyOfParticipationAsObject = function(axiom) 
 						{
-							_factsWithThisAsObject.push(fact);
+							_axiomsWithThisAsObject.push(axiom);
 						};
 			
 						this.getQName = function() 
@@ -70,22 +70,22 @@ grox.Model =
 						};
 
 						// TODO: these get statements are the beginning of a SELECT API
-						// there may be multiple assertions for a single fact/triple
-						this.getAssertionsWithThisAsSubject = function() 
+						// there may be multiple theorems for a single axiom/triple
+						this.getTheoremsWithThisAsSubject = function() 
 						{
-							return _factsWithThisAsSubject;
+							return _axiomsWithThisAsSubject;
 						};
 			
-						// there may be multiple assertions for a single fact/triple
-						this.getAssertionsWithThisAsPredicate = function() 
+						// there may be multiple assertions for a single axiom/triple
+						this.getTheoremsWithThisAsPredicate = function() 
 						{
-							return _factsWithThisAsPredicate;
+							return _axiomsWithThisAsPredicate;
 						};
 						
-						// there may be multiple assertions for a single fact/triple
-						this.getAssertionsWithThisAsObject = function() 
+						// there may be multiple assertions for a single axiom/triple
+						this.getTheoremsWithThisAsObject = function() 
 						{
-							return _factsWithThisAsObject;
+							return _axiomsWithThisAsObject;
 						};
 			
 						// _Signifier constructor code
@@ -120,19 +120,19 @@ grox.Model =
 				return true;
 			}
 
-			// _Fact is an IIFE constructor function which is private to Model
-			// _Fact is an in-memory physical structure of triples (subject, predicate, object)
-			// Depending on the nature of the predicate the same fact might be expressed by multiple assertions, for example
-			// the fact (triple) giraffe,rdfs:subClassOf, mammal might be asserted as
+			// _Axiom is an IIFE constructor function which is private to Model
+			// _Axiom is an in-memory physical structure of triples (subject, predicate, object)
+			// Depending on the nature of the predicate the same axiom might be expressed by multiple assertions, for example
+			// the axiom (triple) giraffe,rdfs:subClassOf, mammal might be asserted as
 			// giraffe isSubclassOfSuperclass mammal or
 			// mammal isSuperclassOfSubclass giraffe
-			let _Fact = 
+			let _Axiom = 
 			(
 				function () 
 				{
 					return function(subject,predicate,object,altPredicateLabel) 
 					{
-						// private to each _Fact instance
+						// private to each _Axiom instance
 						let _subject;
 						let _predicate;
 						let _objectSignifier;
@@ -160,7 +160,7 @@ grox.Model =
 							if (_objectLiteral) {return _objectLiteral;}							
 						};
 			
-						// _Fact constructor code
+						// _Axiom constructor code
 						if (_isSignifier(subject))
 						{
 							_subject = subject;
@@ -259,9 +259,9 @@ grox.Model =
 			};
 
 						
-			_Fact.prototype = 
+			_Axiom.prototype = 
 			{
-				// public, non-privileged methods (one copy for all _Facts)
+				// public, non-privileged methods (one copy for all _Axioms)
 				// used with "this" to call object-specific methods, but has no access to private attributes or methods
 				log: function() 
 				{
@@ -287,18 +287,18 @@ grox.Model =
 				_namespaces[prefix] = URI;
 			}
 
-			this.addAssertion = function(subject,predicate,object,altPredicateLabel)
+			this.addAxiom = function(subject,predicate,object,altPredicateLabel)
 			{
-				//TODO: check if assertion already exists
-				let newAssertion = new _Fact(subject,predicate,object,altPredicateLabel);
-				_facts.push(newAssertion);
-				return newAssertion;
+				//TODO: check if axiom already exists
+				let newAxiom = new _Axiom(subject,predicate,object,altPredicateLabel);
+				_axioms.push(newAxiom);
+				return newAxiom;
 			};
 
 			this.addSignifier = function(QName,prefLabel)
 			{
 				let addedSignifier;
-                if (_signifiers[QName]) {
+				if (_signifiers[QName]) {
 					addedSignifier = _signifiers[QName];
 				}
 				else {
@@ -334,21 +334,23 @@ grox.Model =
 				return _isSignifier(resourceID);
 			}
 
-			this.getAssertionsWithLiteralAsPredicate = function(literal) 
+			this.getTheoremsWithLiteralAsPredicate = function(literal) 
 			{
-				let selectedFacts = [];
+				let selectedAxioms = [];
 				if (typeof literal == "string") {
-					_facts.forEach(element => {
+					_axioms.forEach(element => {
 						if (element.getObject() == literal){
-							selectedFacts.push(element);
+							selectedAxioms.push(element);
 						}	
 					});
 				}
-				return selectedFacts;
+				return selectedAxioms;
 			}
 
 			// constructor code for Model (runs once when the object is instantiated with "new")
 			// ------------------------------
+			_thisModel.addNamespace('grox','http://www.grox.info/');
+			_thisModel.addSignifier('grox:hasPredicate');
 		}
 	}
 )();

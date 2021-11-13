@@ -18,6 +18,7 @@ function handleClick()
     model.addSignifier('rdf:type','isA');
     model.addSignifier('skos:related','isRelatedTo');
 
+
     let r = model.getSignifier('rdf:type');
     r.log();
     var s = model.addSignifier(':Sam');
@@ -25,7 +26,7 @@ function handleClick()
     s.log();
     var w = model.addSignifier('grox:Wally','Wallace');
     w.log();
-    var t = model.addAssertion(':Eric','rdf:type',':Father');
+    var t = model.addAxiom(':Eric','rdf:type',':Father');
     t.log();
     var b = model.getSignifier(':Eric');
     if (b) {b.log()}
@@ -33,72 +34,73 @@ function handleClick()
     if (b2) {b2.log()}
     var f = model.getSignifier(':Father');
     if (f) {f.log()}
-    var z = model.addAssertion(':Smurf','skos:related',':Munchkin'); 
+    var z = model.addAxiom(':Smurf','skos:related',':Munchkin'); 
     z.log();
     var j = model.addSignifier(':Jimmy','Jimmy');
     j.log();
-    var k = model.addAssertion(j,'rdf:type',':Father');
+    var k = model.addAxiom(j,'rdf:type',':Father');
     k.log();
-    var l = model.addAssertion(w,'rdf:type',f);
+    var l = model.addAxiom(w,'rdf:type',f);
     l.log();    
-    var m = model.addAssertion(j,':dateOfBirth','1970-07-24');
+    var m = model.addAxiom(j,':dateOfBirth','1970-07-24');
     m.log();
     var n = model.getSignifier('skos:related');
     if (n) {n.log()}
 
-    var c = model.addAssertion(':Carmen','rdf:type',':Mother');
+    var c = model.addAxiom(':Carmen','rdf:type',':Mother');
     c.log();
 
         
     console.log('Jimmy as subject ----------------------------------------');
-    var jAssertions = j.getAssertionsWithThisAsSubject(); 
-    jAssertions.forEach(element => {
+    var jAxioms = j.getTheoremsWithThisAsSubject(); 
+    jAxioms.forEach(element => {
         element.log();        
     });
 
     console.log('Father as object ----------------------------------------');
-    var fAssertions = f.getAssertionsWithThisAsObject(); 
-    fAssertions.forEach(element => {
+    var fAxioms = f.getTheoremsWithThisAsObject(); 
+    fAxioms.forEach(element => {
         element.log();        
     });
 
     console.log('rdf:type as predicate ----------------------------------------');
-    var rAssertions = r.getAssertionsWithThisAsPredicate(); 
-    rAssertions.forEach(element => {
+    var rAxioms = r.getTheoremsWithThisAsPredicate(); 
+    rAxioms.forEach(element => {
         element.log();        
     });
 
     // TODO: add logic in the model for each of these grox.info predicates
-    model.addSignifier('grox:hasTrait'); // hasTrait disallows bidirectionality. enforces asymmetry of subject and object
+    // Note: grox:hasPredicate is a built in to the model
+    model.addSignifier('grox:hasPredicate'); // hasPredicate disallows bidirectionality. enforces asymmetry of subject and object
 
 
-    let aaaIsRed = model.addAssertion('grox:AAA','grox:hasTrait','red'); 
+    let aaaIsRed = model.addAxiom('grox:AAA','grox:hasPredicate','red'); 
     let aaa = model.getSignifier('grox:AAA');
 
     let bbb = model.addSignifier('grox:BBB','bob');
     let ccc = model.addSignifier('grox:CCC','carmen');
     let ddd = model.addSignifier('grox:DDD','diego');
 
-    model.addAssertion(aaa,'grox:hasTrait','square'); 
-    model.addAssertion(ccc,'grox:hasTrait','red'); 
+    model.addAxiom(aaa,'grox:hasPredicate','square'); 
+    model.addAxiom(ccc,'grox:hasPredicate','red'); 
 
     console.log('AAA as subject -------------------------------------');
 
-    (aaa.getAssertionsWithThisAsSubject()).forEach( element => {
+    (aaa.getTheoremsWithThisAsSubject()).forEach( element => {
       element.log();
       }
     )
 
     console.log('red as predicate ----------------------------------------');
     // TODO: do we want functionality like this?
-    var redAssertions = model.getAssertionsWithLiteralAsPredicate('red'); 
-    redAssertions.forEach(element => {
+    var redTheorems = model.getTheoremsWithLiteralAsPredicate('red'); 
+    redTheorems.forEach(element => {
         element.log();        
     });
 
     console.log('red as predicate, AAA as subject with alice prefLabel ---------------------------');
     aaa.setPrefLabel('alice');
-    redAssertions.forEach(element => {
+    redTheorems.forEach(element => {
         element.log();        
     });
 
