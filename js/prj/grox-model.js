@@ -1,25 +1,46 @@
 // Copyright 2021,  Joe Klemke, Grox LLC
 // Distributed under GNU LESSER GENERAL PUBLIC LICENSE, http://www.gnu.org/licenses/lgpl.txt
 
+// top level grox namespace
 var grox = grox || {};
 
 grox.Model = 
 (
 	// anonymous IIFE function that is called once after the code is parsed, to define the static attributes and methods, and to return the constructor function
-	function() 
+	function(schema) 
 	{
-		// any static attributes would go here
+		// private static attribute (defined once and shared by all Model objects)
 
-		// the actual constructor function which gets called by new Model()
-		return function() 
+		// the actual constructor function which gets invoked by new Model()
+		return function(schema) 
 		{
 			// private attributes, unique to each Model instance
 			let _namespaces = {};
 			let _axioms = [];
 			let _signifiers = {};
 			let _thisModel = this;
+			let _schema = {}; // maybe test some methods, test is object, etc
 
 			// private methods, unique to each Model instance, with access to private attributes and methods
+			let _isSignifier = function(value)
+			{
+				if(value == undefined || typeof value != "object") 
+				{
+					return false;
+				} 
+				else if(value.getQName == undefined || value.notifyOfParticipationAsSubject == undefined || value.notifyOfParticipationAsPredicate == undefined || value.notifyOfParticipationAsObject == undefined ) 
+				{
+					return false;
+				}
+				return true;
+			}
+
+			let _validateSchema = function(schema)
+			{
+				schema.log();
+				return schema;
+			}
+
 			// _Signifier is an IIFE constructor function which is private to Model
 			let _Signifier = 
 			(
@@ -106,20 +127,6 @@ grox.Model =
 				}
 			)();
 			
-			// private method for _Model
-			let _isSignifier = function(value)
-			{
-				if(value == undefined || typeof value != "object") 
-				{
-					return false;
-				} 
-				else if(value.getQName == undefined || value.notifyOfParticipationAsSubject == undefined || value.notifyOfParticipationAsPredicate == undefined || value.notifyOfParticipationAsObject == undefined ) 
-				{
-					return false;
-				}
-				return true;
-			}
-
 			// _Axiom is an IIFE constructor function which is private to Model
 			// _Axiom is an in-memory physical structure of triples (subject, predicate, object)
 			// Depending on the nature of the predicate the same axiom might be expressed by multiple assertions, for example
@@ -179,7 +186,7 @@ grox.Model =
 						}
 						if (!_subject) {throw new Error("Invalid subject for new Assertion, " + subject + ".");}
 						
-						if (_thisModel.isSignifier(predicate)) 
+						if (_isSignifier(predicate)) 
 						{
 							_predicate = predicate;
 						} 
@@ -197,7 +204,7 @@ grox.Model =
 						}
 						if (!_predicate) {throw new Error("Invalid predicate for new Assertion, " + predicate + ".");}
 			
-						if (_thisModel.isSignifier(object)) 
+						if (_isSignifier(object)) 
 						{
 							_objectSignifier = object;
 						} 
@@ -226,7 +233,7 @@ grox.Model =
 			
 						_subject.notifyOfParticipationAsSubject(this);
 						_predicate.notifyOfParticipationAsPredicate(this);
-						if (_thisModel.isSignifier(_objectSignifier)) 
+						if (_isSignifier(_objectSignifier)) 
 						{
 							_objectSignifier.notifyOfParticipationAsObject(this);
 						}
@@ -239,7 +246,7 @@ grox.Model =
 						{
 							predicateLabel = altPredicateLabel;
 						} 
-						else if(_thisModel.isSignifier(predicate))
+						else if(_isSignifier(predicate))
 						{
 							predicateLabel = predicate.getPrefLabel();
 						}
@@ -329,11 +336,6 @@ grox.Model =
 				return signifier;
 			}
 
-			this.isSignifier = function(resourceID)
-			{
-				return _isSignifier(resourceID);
-			}
-
 			this.getTheoremsWithLiteralAsPredicate = function(literal) 
 			{
 				let selectedAxioms = [];
@@ -349,6 +351,17 @@ grox.Model =
 
 			// constructor code for Model (runs once when the object is instantiated with "new")
 			// ------------------------------
+
+      // TODO: the basic idea is for schema to manipulate this model, 
+      // so schema needs the public methods of model, which are
+      //addNamespace()
+      //addAxiom()
+      //addSignifier()
+      //getSignifier()
+      //getTheoremsWithLiteralAsPredicate()
+
+			_validateSchema(schema);
+			_schema = schema;
 			_thisModel.addNamespace('grox','http://www.grox.info/');
 			_thisModel.addSignifier('grox:hasPredicate');
 		}

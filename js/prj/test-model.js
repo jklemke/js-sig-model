@@ -4,7 +4,10 @@
 
 function handleClick()
 {
-    model = new grox.Model();
+   
+    let schema = new grox.Schema('1234567890', 'Pro JavaScript Design Patterns', 'Dustin Diaz');
+    let model = new grox.Model(schema);
+
     model.addNamespace('rdf','http://www.w3.org/1999/02/22-rdf-syntax-ns#');
     model.addNamespace('rdfs','http://www.w3.org/2000/01/rdf-schema#');
     model.addNamespace('dc','http://purl.org/dc/elements/1.1/');
@@ -87,8 +90,8 @@ function handleClick()
     console.log('AAA as subject -------------------------------------');
 
     (aaa.getTheoremsWithThisAsSubject()).forEach( element => {
-      element.log();
-      }
+        element.log();
+        }
     )
 
     console.log('red as predicate ----------------------------------------');
