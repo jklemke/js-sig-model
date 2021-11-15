@@ -63,19 +63,19 @@ function handleClick()
 
       
   console.log('Jimmy as subject ----------------------------------------');
-  let jAxioms = j.getAxiomsWithThisAsNominative(); 
+  let jAxioms = j.getAxiomsWithThisAsNomen(); 
   jAxioms.forEach(element => {
       element.log();        
   });
 
   console.log('Father as object ----------------------------------------');
-  let fAxioms = f.getAxiomsWithThisAsAttributative(); 
+  let fAxioms = f.getAxiomsWithThisAsAttributum(); 
   fAxioms.forEach(element => {
       element.log();        
   });
 
   console.log('rdf:type as predicate ----------------------------------------');
-  let rAxioms = r.getAxiomsWithThisAsCopulative(); 
+  let rAxioms = r.getAxiomsWithThisAsCopula(); 
   rAxioms.forEach(element => {
       element.log();        
   });
@@ -93,24 +93,23 @@ function handleClick()
 
   console.log('AAA as nominative -------------------------------------');
 
-  (aaa.getAxiomsWithThisAsNominative()).forEach( element => {
+  (aaa.getAxiomsWithThisAsNomen()).forEach( element => {
       element.log();
       }
   )
 
-  console.log('red as copulative ----------------------------------------');
-  let redAxioms = signature.getAxiomsWithLiteralAsAttributative('red'); 
+  console.log('red as copula ----------------------------------------');
+  let redAxioms = signature.getAxiomsWithLiteralAsAttributum('red'); 
   redAxioms.forEach(element => {
       element.log();        
   });
 
-  console.log('red as attribute, AAA as nominative with alice prefLabel ---------------------------');
+  console.log('red as attributum, AAA as nomen with alice prefLabel ---------------------------');
   aaa.setPrefLabel('alice');
   redAxioms.forEach(element => {
       element.log();        
   });
 
-  console.log(signature.signifierType);
 
 }
 

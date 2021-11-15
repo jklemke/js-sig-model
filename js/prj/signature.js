@@ -12,13 +12,13 @@ grox.Signature =
 	{
 		// private static attribute (defined once and shared by all Signature objects)
     const _signifierTypeEnum = {
-      NOMINATIVE:  1,
-      COPULATIVE:  2,
-      NOMINATIVE_COPULATIVE: 3,          
-      ATTRIBUTATIVE: 4,
-      NOMINATIVE_ATTRIBUTATIVE: 5,
-      COPULATIVE_ATTRIBUTATIVE: 6,
-      NOMINATIVE_COPULATIVE_ATTRIBUTATIVE: 7
+      NOMEN:  1,
+      COPULA:  2,
+      NOMEN_COPULA: 3,          
+      ATTRIBUTUM: 4,
+      NOMEN_ATTRIBUTUM: 5,
+      COPULA_ATTRIBUTUM: 6,
+      NOMEN_COPULA_ATTRIBUTUM: 7
     }
   
 		// the actual constructor function which gets invoked by new Signature()
@@ -37,9 +37,9 @@ grox.Signature =
           value == undefined ||
           typeof value != "object" ||
           value.getQName == undefined || 
-          value.notifyOfParticipationAsNominative == undefined || 
-          value.notifyOfParticipationAsCopulative == undefined || 
-          value.notifyOfParticipationAsAttributative == undefined 
+          value.notifyOfParticipationAsNomen == undefined || 
+          value.notifyOfParticipationAsCopula == undefined || 
+          value.notifyOfParticipationAsAttributum == undefined 
           )  
         {
           return false;
@@ -60,28 +60,28 @@ grox.Signature =
 						// private to each _Signifier instance
 						let _QName;
 						let _prefLabel;
-						let _axiomsWithThisAsNominative = [];
-						let _axiomsWithThisAsCopulative = [];
-						let _axiomsWithThisAsAttributative = [];
+						let _axiomsWithThisAsNomen = [];
+						let _axiomsWithThisAsCopula = [];
+						let _axiomsWithThisAsAttributum = [];
             let _signifierType;
 			
-						this.notifyOfParticipationAsNominative = function(axiom) 
+						this.notifyOfParticipationAsNomen = function(axiom) 
 						{
-							_axiomsWithThisAsNominative.push(axiom);
-							if (axiom.getCopulativeLabel() != undefined)
+							_axiomsWithThisAsNomen.push(axiom);
+							if (axiom.getCopulaLabel() != undefined)
 							{
-								this[axiom.getCopulativeLabel()] = axiom.getAttributative();
+								this[axiom.getCopulaLabel()] = axiom.getAttributum();
 							}
 						};
 			
-						this.notifyOfParticipationAsCopulative = function(axiom) 
+						this.notifyOfParticipationAsCopula = function(axiom) 
 						{
-							_axiomsWithThisAsCopulative.push(axiom);
+							_axiomsWithThisAsCopula.push(axiom);
 						};
 			
-						this.notifyOfParticipationAsAttributative = function(axiom) 
+						this.notifyOfParticipationAsAttributum = function(axiom) 
 						{
-							_axiomsWithThisAsAttributative.push(axiom);
+							_axiomsWithThisAsAttributum.push(axiom);
 						};
 			
 						this.getQName = function() 
@@ -107,19 +107,19 @@ grox.Signature =
 
 						// TODO: these get statements are the beginning of a SELECT API
 						// there may be multiple theorems for a single axiom/triple
-						this.getAxiomsWithThisAsNominative = function() 
+						this.getAxiomsWithThisAsNomen = function() 
 						{
-							return _axiomsWithThisAsNominative;
+							return _axiomsWithThisAsNomen;
 						};
 			
-						this.getAxiomsWithThisAsCopulative = function() 
+						this.getAxiomsWithThisAsCopula = function() 
 						{
-							return _axiomsWithThisAsCopulative;
+							return _axiomsWithThisAsCopula;
 						};
 						
-						this.getAxiomsWithThisAsAttributative = function() 
+						this.getAxiomsWithThisAsAttributum = function() 
 						{
-							return _axiomsWithThisAsAttributative;
+							return _axiomsWithThisAsAttributum;
 						};
 			
 						// _Signifier constructor code
@@ -135,7 +135,7 @@ grox.Signature =
             }
 
             if (!_signifierType) {
-              _signifierType = _signifierTypeEnum.NOMINATIVE_ATTRIBUTATIVE;
+              _signifierType = _signifierTypeEnum.NOMEN_ATTRIBUTUM;
             }
     
 						if (!prefLabel) {
@@ -150,130 +150,126 @@ grox.Signature =
 			)();
 			
 			// _Axiom is an IIFE constructor function which is private to Signature
-			// _Axiom is an in-memory physical structure of triples (Nominative, Copulative, Attributative)
-			// Depending on the nature of the Copulative the same axiom might be expressed by multiple assertions, for example
-			// the axiom (triple) giraffe,rdfs:subClassOf, mammal might be asserted as
-			// giraffe isSubclassOfSuperclass mammal or
-			// mammal isSuperclassOfSubclass giraffe
+			// An Axiom is an in-memory physical structure of an RDF-like triples (Nomen, Copula, Attributum)
 			let _Axiom = 
 			(
 				function () 
 				{
-					return function(nominative, copulative, attributative, altCopulativeLabel) 
+					return function(Nomen, Copula, Attributum, altCopulaLabel) 
 
 					{
 						// private to each _Axiom instance
-						let _nominative;
-						let _copulative;
-						let _attributativeSignifier;
-						let _attributativeLiteral;
-						let _copulativeLabel;
+						let _Nomen;
+						let _Copula;
+						let _AttributumSignifier;
+						let _AttributumLiteral;
+						let _CopulaLabel;
 			
-						this.getNominative = function() 
+						this.getNomen = function() 
 						{
-							return _nominative;
+							return _Nomen;
 						};
 			
-						this.getCopulative = function() 
+						this.getCopula = function() 
 						{
-							return _copulative;
+							return _Copula;
 						};
 			
-						this.getCopulativeLabel = function() 
+						this.getCopulaLabel = function() 
 						{
-							return _copulativeLabel;
+							return _CopulaLabel;
 						};
 			
-						this.getAttributative = function() 
+						this.getAttributum = function() 
 						{
-							if (_attributativeSignifier) {return _attributativeSignifier;}
-							if (_attributativeLiteral) {return _attributativeLiteral;}							
+							if (_AttributumSignifier) {return _AttributumSignifier;}
+							if (_AttributumLiteral) {return _AttributumLiteral;}							
 						};
 			
 						// _Axiom constructor code
-						if (_isTypeOfSignifier(nominative))
+						if (_isTypeOfSignifier(Nomen))
 						{
-							_nominative = nominative;
+							_Nomen = Nomen;
 						} 
-						if (!_nominative) 
+						if (!_Nomen) 
 						{
-							var testNominative = _thisSignature.getSignifier(nominative);
-							if (testNominative) {_nominative = testNominative;}
+							var testNomen = _thisSignature.getSignifier(Nomen);
+							if (testNomen) {_Nomen = testNomen;}
 						}
-						if (!_nominative)
+						if (!_Nomen)
 						{
-							if (typeof nominative == 'string')
+							if (typeof Nomen == 'string')
 							{
-								_nominative = _thisSignature.addSignifier(nominative);
+								_Nomen = _thisSignature.addSignifier(Nomen);
 							}
 						}
-						if (!_nominative) {throw new Error("Invalid Nominative for new Assertion, " + nominative + ".");}
+						if (!_Nomen) {throw new Error("Invalid Nomen for new Assertion, " + Nomen + ".");}
 						
-						if (_isTypeOfSignifier(copulative)) 
+						if (_isTypeOfSignifier(Copula)) 
 						{
-							_copulative = copulative;
+							_Copula = Copula;
 						} 
-						if (!_copulative) 
+						if (!_Copula) 
 						{
-							var testCopulative = _thisSignature.getSignifier(copulative);
-							if (testCopulative) {_copulative = testCopulative;}
+							var testCopula = _thisSignature.getSignifier(Copula);
+							if (testCopula) {_Copula = testCopula;}
 						}
-						if (!_copulative)
+						if (!_Copula)
 						{
-							if (typeof copulative == 'string')
+							if (typeof Copula == 'string')
 							{
-								_copulative = _thisSignature.addSignifier(copulative, altCopulativeLabel );
+								_Copula = _thisSignature.addSignifier(Copula, altCopulaLabel );
 							}
 						}
-						if (!_copulative) {throw new Error("Invalid Copulative for new Assertion, " + copulative + ".");}
+						if (!_Copula) {throw new Error("Invalid Copula for new Assertion, " + Copula + ".");}
 			
-						if (_isTypeOfSignifier(attributative)) 
+						if (_isTypeOfSignifier(Attributum)) 
 						{
-							_attributativeSignifier = attributative;
+							_AttributumSignifier = Attributum;
 						} 
-						if (!_attributativeSignifier) 
+						if (!_AttributumSignifier) 
 						{
-							var testAttributative = _thisSignature.getSignifier(attributative);
-							if (testAttributative) {_attributativeSignifier = testAttributative;}
+							var testAttributum = _thisSignature.getSignifier(Attributum);
+							if (testAttributum) {_AttributumSignifier = testAttributum;}
 						}
-						if (!_attributativeSignifier)
+						if (!_AttributumSignifier)
 						{
-							// if Attributative string has one colon, assume the caller wants it to be a new Signifier
-							if (typeof attributative == 'string' && attributative.indexOf(":") >= 0 && attributative.lastIndexOf(":") == attributative.indexOf(":"))
+							// if Attributum string has one colon, assume the caller wants it to be a new Signifier
+							if (typeof Attributum == 'string' && Attributum.indexOf(":") >= 0 && Attributum.lastIndexOf(":") == Attributum.indexOf(":"))
 							{
-								_attributativeSignifier = _thisSignature.addSignifier(attributative);
+								_AttributumSignifier = _thisSignature.addSignifier(Attributum);
 							}
 						}
-						if (!_attributativeSignifier) 
+						if (!_AttributumSignifier) 
 						{
-							// if Attributative string is any other string, then store it as a string literal
-							if (typeof attributative == 'string')
-							_attributativeLiteral = attributative;
+							// if Attributum string is any other string, then store it as a string literal
+							if (typeof Attributum == 'string')
+							_AttributumLiteral = Attributum;
 						}
-						if (!_attributativeSignifier && !_attributativeLiteral) {throw new Error("Invalid Attributative for new Assertion, " + attributative + ".");}
+						if (!_AttributumSignifier && !_AttributumLiteral) {throw new Error("Invalid Attributum for new Assertion, " + Attributum + ".");}
 			
-						_copulativeLabel = _constructCopulativeLabel(_copulative,altCopulativeLabel);
+						_CopulaLabel = _constructCopulaLabel(_Copula,altCopulaLabel);
 			
-						_nominative.notifyOfParticipationAsNominative(this);
-						_copulative.notifyOfParticipationAsCopulative(this);
-						if (_isTypeOfSignifier(_attributativeSignifier)) 
+						_Nomen.notifyOfParticipationAsNomen(this);
+						_Copula.notifyOfParticipationAsCopula(this);
+						if (_isTypeOfSignifier(_AttributumSignifier)) 
 						{
-							_attributativeSignifier.notifyOfParticipationAsAttributative(this);
+							_AttributumSignifier.notifyOfParticipationAsAttributum(this);
 						}
 					}
 			
-					function _constructCopulativeLabel(copulative, altCopulativeLabel)
+					function _constructCopulaLabel(Copula, altCopulaLabel)
 					{
-						let copulativeLabel;
-						if(altCopulativeLabel != undefined && (typeof altCopulativeLabel) == "string") 
+						let CopulaLabel;
+						if(altCopulaLabel != undefined && (typeof altCopulaLabel) == "string") 
 						{
-							copulativeLabel = altCopulativeLabel;
+							CopulaLabel = altCopulaLabel;
 						} 
-						else if(_isTypeOfSignifier(copulative))
+						else if(_isTypeOfSignifier(Copula))
 						{
-							copulativeLabel = copulative.getPrefLabel();
+							CopulaLabel = Copula.getPrefLabel();
 						}
-						return copulativeLabel;
+						return CopulaLabel;
 					}
 				}
 			)();
@@ -281,36 +277,33 @@ grox.Signature =
 			_Signifier.prototype = 
 			{
 				// public, non-privileged methods (one copy for all _Signifiers)
-				// uses "this" to call Attributative-specific methods, but has no access to private attributes or methods
+				// uses "this" to call Attributum-specific methods, but has no access to private attributes or methods
 				log: function() 
 				{
           let msg = "Signifier = " + this.getQName();
           let signifierType = this.getSignifierType()          
           if (signifierType) {
             switch (signifierType) {
-              case _signifierTypeEnum.ALL: 
-                msg = msg + ", signifierType = " + "ALL";
+              case _signifierTypeEnum.NOMEN:
+                msg = msg + ", signifierType = " + "NOMEN";
                 break;
-              case _signifierTypeEnum.NOMINATIVE:
-                msg = msg + ", signifierType = " + "NOMINATIVE";
+              case _signifierTypeEnum.COPULA:
+                msg = msg + ", signifierType = " + "COPULA";
                 break;
-              case _signifierTypeEnum.COPULATIVE:
-                msg = msg + ", signifierType = " + "COPULATIVE";
+              case _signifierTypeEnum.NOMEN_COPULA:
+                msg = msg + ", signifierType = " + "NOMEN_COPULA";
                 break;
-              case _signifierTypeEnum.NOMINATIVE_COPULATIVE:
-                msg = msg + ", signifierType = " + "NOMINATIVE_COPULATIVE";
+              case _signifierTypeEnum.ATTRIBUTUM:
+                msg = msg + ", signifierType = " + "ATTRIBUTUM";
                 break;
-              case _signifierTypeEnum.ATTRIBUTATIVE:
-                msg = msg + ", signifierType = " + "ATTRIBUTATIVE";
+              case _signifierTypeEnum.NOMEN_ATTRIBUTUM:
+                msg = msg + ", signifierType = " + "NOMEN_ATTRIBUTUM";
                 break;
-              case _signifierTypeEnum.NOMINATIVE_ATTRIBUTATIVE:
-                msg = msg + ", signifierType = " + "NOMINATIVE_ATTRIBUTATIVE";
+              case _signifierTypeEnum.COPULA_ATTRIBUTUM:
+                msg = msg + ", signifierType = " + "COPULA_ATTRIBUTUM";
                 break;
-              case _signifierTypeEnum.COPULATIVE_ATTRIBUTATIVE:
-                msg = msg + ", signifierType = " + "COPULATIVE_ATTRIBUTATIVE";
-                break;
-              case _signifierTypeEnum.NOMINATIVE_COPULATIVE_ATTRIBUTATIVE:
-                msg = msg + ", signifierType = " + "NOMINATIVE_COPULATIVE_ATTRIBUTATIVE";
+              case _signifierTypeEnum.NOMEN_COPULA_ATTRIBUTUM:
+                msg = msg + ", signifierType = " + "NOMEN_COPULA_ATTRIBUTUM";
                 break;
             }            
           }
@@ -321,18 +314,18 @@ grox.Signature =
 			_Axiom.prototype = 
 			{
 				// public, non-privileged methods (one copy for all _Axioms)
-				// uses "this" to call Attributative-specific methods, but has no access to private attributes or methods
+				// uses "this" to call Attributum-specific methods, but has no access to private attributes or methods
 				log: function() 
 				{
-					let msg  = "Nominative  " + this.getNominative().getPrefLabel() + "\nCopulative  " + this.getCopulative().getPrefLabel()  + "\nAttributative  ";
-					let testAttributative = this.getAttributative();
-					if (_isTypeOfSignifier(testAttributative))
+					let msg  = "Nomen  " + this.getNomen().getPrefLabel() + "\nCopula  " + this.getCopula().getPrefLabel()  + "\nAttributum  ";
+					let testAttributum = this.getAttributum();
+					if (_isTypeOfSignifier(testAttributum))
 					{
-						msg += testAttributative.getPrefLabel();
+						msg += testAttributum.getPrefLabel();
 					}
 					else
 					{
-						msg += testAttributative.toString();
+						msg += testAttributum.toString();
 					}
 					console.log(msg);
 				}
@@ -382,22 +375,22 @@ grox.Signature =
 				return signifier;
 			}
 
-			this.addAxiom = function(nominative, copulative, attributative, altCopulativeLabel)
+			this.addAxiom = function(Nomen, Copula, Attributum, altCopulaLabel)
 			{
-				//TODO: check if axiom already exists by checking each Nominative, Attributative, Copulative
-				let newAxiom = new _Axiom(nominative, copulative, attributative, altCopulativeLabel);
+				//TODO: check if axiom already exists by checking each Nomen, Attributum, Copula
+				let newAxiom = new _Axiom(Nomen, Copula, Attributum, altCopulaLabel);
 				_axioms.push(newAxiom);
 				return newAxiom;
 			};
 
       // TODO: getAxioms is the beginning of a query language
 
-			this.getAxiomsWithLiteralAsAttributative = function(literal) 
+			this.getAxiomsWithLiteralAsAttributum = function(literal) 
 			{
 				let selectedAxioms = [];
 				if (typeof literal == "string") {
 					_axioms.forEach(element => {
-						if (element.getAttributative() == literal){
+						if (element.getAttributum() == literal){
 							selectedAxioms.push(element);
 						}	
 					});
@@ -410,7 +403,7 @@ grox.Signature =
         return _signifierTypeEnum;
       }
 
-			// constructor code for Signature (runs once when the Attributative is instantiated with "new")
+			// constructor code for Signature (runs once when the Attributum is instantiated with "new")
 			// ------------------------------
     }
 	}
