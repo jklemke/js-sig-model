@@ -12,7 +12,6 @@ grox.Signature =
 	{
 		// private static attribute (defined once and shared by all Signature objects)
     const _signifierTypeEnum = {
-      ALL: 0,
       NOMINATIVE:  1,
       COPULATIVE:  2,
       NOMINATIVE_COPULATIVE: 3,          
@@ -136,7 +135,7 @@ grox.Signature =
             }
 
             if (!_signifierType) {
-              _signifierType = _signifierTypeEnum.NOMINATIVE_COPULATIVE_ATTRIBUTATIVE;
+              _signifierType = _signifierTypeEnum.NOMINATIVE_ATTRIBUTATIVE;
             }
     
 						if (!prefLabel) {
