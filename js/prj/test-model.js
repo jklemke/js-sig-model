@@ -22,9 +22,14 @@ function handleClick()
   signature.addNamespace('grox','http://www.grox.info/');
   signature.addNamespace('foaf','http://xmlns.com/foaf/0.1/');
 
-  signature.addSignifier('rdf:type','isA');
+  let sigType = signature.getSignifierTypeEnum();
+  console.log(sigType);
+  console.log(signature.getSignifierTypeEnum());
+  console.log(sigType.COPULATIVE);
+  
+  signature.addSignifier('rdf:type','isA', sigType.COPULATIVE);
+  
   signature.addSignifier('skos:related','isRelatedTo');
-
 
   let r = signature.getSignifier('rdf:type');
   r.log();
@@ -86,23 +91,26 @@ function handleClick()
   signature.addAxiom(aaa,'grox:hasPredicate','square'); 
   signature.addAxiom(ccc,'grox:hasPredicate','red'); 
 
-  console.log('AAA as subject -------------------------------------');
+  console.log('AAA as nominative -------------------------------------');
 
   (aaa.getAxiomsWithThisAsNominative()).forEach( element => {
       element.log();
       }
   )
 
-  console.log('red as predicate ----------------------------------------');
+  console.log('red as copulative ----------------------------------------');
   let redAxioms = signature.getAxiomsWithLiteralAsAttributative('red'); 
   redAxioms.forEach(element => {
       element.log();        
   });
 
-  console.log('red as predicate, AAA as subject with alice prefLabel ---------------------------');
+  console.log('red as attribute, AAA as nominative with alice prefLabel ---------------------------');
   aaa.setPrefLabel('alice');
   redAxioms.forEach(element => {
       element.log();        
   });
 
+  console.log(signature.signifierType);
+
 }
+

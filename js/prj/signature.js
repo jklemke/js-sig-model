@@ -10,8 +10,18 @@ grox.Signature =
 	// anonymous IIFE function that is called once after the code is parsed, to define the static attributes and methods, and to return the constructor function
 	function() 
 	{
-		// private static attribute (defined once and shared by all Signature Attributatives)
-
+		// private static attribute (defined once and shared by all Signature objects)
+    const _signifierTypeEnum = {
+      ALL: 0,
+      NOMINATIVE:  1,
+      COPULATIVE:  2,
+      NOMINATIVE_COPULATIVE: 3,          
+      ATTRIBUTATIVE: 4,
+      NOMINATIVE_ATTRIBUTATIVE: 5,
+      COPULATIVE_ATTRIBUTATIVE: 6,
+      NOMINATIVE_COPULATIVE_ATTRIBUTATIVE: 7
+    }
+  
 		// the actual constructor function which gets invoked by new Signature()
 		return function(model) 
 		{
@@ -46,7 +56,7 @@ grox.Signature =
 			(
 				function () 
 				{
-					return function(QName,prefLabel)
+					return function(QName, prefLabel, signifierType)
 					{
 						// private to each _Signifier instance
 						let _QName;
@@ -54,6 +64,7 @@ grox.Signature =
 						let _axiomsWithThisAsNominative = [];
 						let _axiomsWithThisAsCopulative = [];
 						let _axiomsWithThisAsAttributative = [];
+            let _signifierType;
 			
 						this.notifyOfParticipationAsNominative = function(axiom) 
 						{
@@ -90,6 +101,11 @@ grox.Signature =
 							return _prefLabel;
 						};
 
+            this.getSignifierType = function() 
+						{
+							return _signifierType;
+						};			
+
 						// TODO: these get statements are the beginning of a SELECT API
 						// there may be multiple theorems for a single axiom/triple
 						this.getAxiomsWithThisAsNominative = function() 
@@ -114,6 +130,15 @@ grox.Signature =
 						if (QName.indexOf(":") != QName.lastIndexOf(":"))  {throw new Error("When adding a signifier, only one colon is allowed in QName string.");} 
 						if (QName.indexOf(":") == QName.length - 1)  {throw new Error("When adding a signifier, at least one additional character must follow the colon in QName string.");} 				
 						
+            if (signifierType != undefined) {
+              if (!signifierType) {throw new Error("When adding a signifier, if signifierType is specified it must be a signifierType enumeration.");}  
+              _signifierType = signifierType;
+            }
+
+            if (!_signifierType) {
+              _signifierType = _signifierTypeEnum.NOMINATIVE_COPULATIVE_ATTRIBUTATIVE;
+            }
+    
 						if (!prefLabel) {
 							if (QName.indexOf(":") == 0)  {prefLabel = QName.substring(1);} 
 							else {prefLabel = QName.split(":")[1];}
@@ -238,7 +263,7 @@ grox.Signature =
 						}
 					}
 			
-					function _constructCopulativeLabel(copulative,altCopulativeLabel)
+					function _constructCopulativeLabel(copulative, altCopulativeLabel)
 					{
 						let copulativeLabel;
 						if(altCopulativeLabel != undefined && (typeof altCopulativeLabel) == "string") 
@@ -247,7 +272,7 @@ grox.Signature =
 						} 
 						else if(_isTypeOfSignifier(copulative))
 						{
-							CopulativeLabel = copulative.getPrefLabel();
+							copulativeLabel = copulative.getPrefLabel();
 						}
 						return copulativeLabel;
 					}
@@ -260,10 +285,39 @@ grox.Signature =
 				// uses "this" to call Attributative-specific methods, but has no access to private attributes or methods
 				log: function() 
 				{
-					console.log("Signifier = " + this.getQName());
+          let msg = "Signifier = " + this.getQName();
+          let signifierType = this.getSignifierType()          
+          if (signifierType) {
+            switch (signifierType) {
+              case _signifierTypeEnum.ALL: 
+                msg = msg + ", signifierType = " + "ALL";
+                break;
+              case _signifierTypeEnum.NOMINATIVE:
+                msg = msg + ", signifierType = " + "NOMINATIVE";
+                break;
+              case _signifierTypeEnum.COPULATIVE:
+                msg = msg + ", signifierType = " + "COPULATIVE";
+                break;
+              case _signifierTypeEnum.NOMINATIVE_COPULATIVE:
+                msg = msg + ", signifierType = " + "NOMINATIVE_COPULATIVE";
+                break;
+              case _signifierTypeEnum.ATTRIBUTATIVE:
+                msg = msg + ", signifierType = " + "ATTRIBUTATIVE";
+                break;
+              case _signifierTypeEnum.NOMINATIVE_ATTRIBUTATIVE:
+                msg = msg + ", signifierType = " + "NOMINATIVE_ATTRIBUTATIVE";
+                break;
+              case _signifierTypeEnum.COPULATIVE_ATTRIBUTATIVE:
+                msg = msg + ", signifierType = " + "COPULATIVE_ATTRIBUTATIVE";
+                break;
+              case _signifierTypeEnum.NOMINATIVE_COPULATIVE_ATTRIBUTATIVE:
+                msg = msg + ", signifierType = " + "NOMINATIVE_COPULATIVE_ATTRIBUTATIVE";
+                break;
+            }            
+          }
+					console.log(msg);
 				}
 			};
-
 						
 			_Axiom.prototype = 
 			{
@@ -295,23 +349,23 @@ grox.Signature =
         return newNamespace;
 			}
 
-			this.addSignifier = function(QName, prefLabel)
+			this.addSignifier = function(QName, prefLabel, signifierType)
 			{
-				let newSignifier;
-				if (_signifiers[QName]) {
-					newSignifier = _signifiers[QName];
-				}
-				else {
-					newSignifier = new _Signifier(QName, prefLabel);
-					if (QName.indexOf(":") != 0)
-					{
-						let prefix = QName.split(":")[0];
-						if (_namespaces[prefix] == undefined) {throw new Error("When adding a signifier, QName must use an existing namespacePrefix.  Specified prefix was " + prefix);}
-					}
-		
-					_signifiers[QName] = newSignifier;	
-				}
-				return newSignifier;				
+        let newSignifier;
+        if (_signifiers[QName]) {
+          newSignifier = _signifiers[QName];
+        }
+        else {
+          newSignifier = new _Signifier(QName, prefLabel, signifierType);
+          if (QName.indexOf(":") != 0)
+          {
+            let prefix = QName.split(":")[0];
+            if (_namespaces[prefix] == undefined) {throw new Error("When adding a signifier, QName must use an existing namespacePrefix.  Specified prefix was " + prefix);}
+          }
+
+          _signifiers[QName] = newSignifier;	
+        }
+        return newSignifier;				
 			};
 			
 			this.getSignifier = function(signifierId)
@@ -352,6 +406,11 @@ grox.Signature =
 				return selectedAxioms;
 			}
 
+      this.getSignifierTypeEnum = function () 
+      {
+        return _signifierTypeEnum;
+      }
+
 			// constructor code for Signature (runs once when the Attributative is instantiated with "new")
 			// ------------------------------
     }
@@ -360,5 +419,4 @@ grox.Signature =
 
 grox.Signature.prototype = 
 {
-};
-
+}
