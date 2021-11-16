@@ -2,13 +2,13 @@
 // Distributed under GNU LESSER GENERAL PUBLIC LICENSE, http://www.gnu.org/licenses/lgpl.txt
 
 
-function handleClick()
+function testSignature()
 {   
   // TODO: reverse this, pass the schema to the model
   let signature = new grox.Signature();
 //  let model = new grox.Model();
 
-  // TODO: add logic in the model for each of these default namespaces
+  // TODO: add logic in the grammar for each of these default namespaces
   signature.addNamespace('grox','http://www.grox.info/');
   signature.addSignifier('grox:hasPredicate'); // hasPredicate disallows bidirectionality. enforces asymmetry of subject and object
 
@@ -103,13 +103,6 @@ function handleClick()
   redAxioms.forEach(element => {
       element.log();        
   });
-
-  console.log('red as attributum, AAA as nomen with alice prefLabel ---------------------------');
-  aaa.setPrefLabel('alice');
-  redAxioms.forEach(element => {
-      element.log();        
-  });
-
 
 }
 
