@@ -358,7 +358,7 @@ grox.Signature =
 				return signifier;
 			}
 
-			this.getQNamesForPrefLabel = function(prefLabel)
+			this.getSignifiersForPrefLabel = function(prefLabel)
 			{
 				return _prefLabels[prefLabel];
 			}
@@ -412,7 +412,7 @@ grox.isTypeOfSignature = function (testValue)
 		testValue.getSignifier == undefined ||
 		testValue.addAxiom == undefined ||
 		testValue.getAxiomsWithLiteralAsAttributum == undefined ||
-		testValue.getSignifierTypeEnum == undefined
+		testValue.getSignifierParticipationEnum == undefined
 	)
 	{
 		return false;

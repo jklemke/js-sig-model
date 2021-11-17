@@ -70,26 +70,44 @@ grox.Grammar =
 				_signature.addNamespace('grox','http://www.grox.info/');
 			}
 
+			let _checkForDuplicatePrefLabels = function (prefLabel) {
+				let existingSignifiersForPrefLabel = signature.getSignifiersForPrefLabel(prefLabel);
+				if (existingSignifiersForPrefLabel) {
+					let existingQName;
+					for (sigId in existingSignifiersForPrefLabel) {
+						existingQName = sigId + " ";
+					}
+					throw new Error("prefLabel = " + prefLabel + " has already been used for QName = " + existingQName ) 
+				}
+			}
+
+			let _validateAndAddCopulaSignifier = function (QName, prefLabel) {
+				_checkForDuplicatePrefLabels(prefLabel);
+				signature.addSignifier(QName, prefLabel, _signature.getSignifierParticipationEnum().COPULA);
+			}
+
 			let _addCoreCopulaOnlySignifiers = function ()
 			{
 				// for our purposes here, we will never re-use a prefLabel for different QNames
 				// these are the symmetric copulas of particularization and generalization
-				signature.addSignifier("grox:iT4tYHw9xJVf65egdT1hOtNu", 'partWrtGen', _signature.getSignifierTypeEnum().COPULA);
-				signature.addSignifier('grox:Fy28scb0taxYGdYeexBx3365', "genWrtPart", _signature.getSignifierTypeEnum().COPULA);
-				signature.addSignifier('grox:LY41ZUMrKdPh9G3w6b2rxFUY', "subGenWrtSuperGen", _signature.getSignifierTypeEnum().COPULA);
-				signature.addSignifier('grox:QT64ORWiazZEsiU9k2pfhDUf', "superGenWrtSubGen", _signature.getSignifierTypeEnum().COPULA);
-				signature.addSignifier('grox:QQ46Ef5vecHgr6ctohqU1pTo', "subGenWrtTopDomain", _signature.getSignifierTypeEnum().COPULA);
-				signature.addSignifier('grox:Wb4bglkQ9PrEt3C7y0YCOqpA', "TopDomainWrtsubGen", _signature.getSignifierTypeEnum().COPULA);
+				let newPrefLabel;
+
+				_validateAndAddCopulaSignifier ("grox:iT4tYHw9xJVf65egdT1hOtNu", "partWrtGen");
+				_validateAndAddCopulaSignifier ("grox:Fy28scb0taxYGdYeexBx3365", "genWrtPart");
+				_validateAndAddCopulaSignifier ("grox:LY41ZUMrKdPh9G3w6b2rxFUY", "subGenWrtSuperGen");
+				_validateAndAddCopulaSignifier ("grox:QT64ORWiazZEsiU9k2pfhDUf", "superGenWrtSubGen");
+				_validateAndAddCopulaSignifier ("grox:QQ46Ef5vecHgr6ctohqU1pTo", "subGenWrtTopDomain");
+				_validateAndAddCopulaSignifier ("grox:Wb4bglkQ9PrEt3C7y0YCOqpA", "TopDomainWrtsubGen");
 
 				// these are the asymmetric copulas of traits (characteristics of particularities and generalities)
-				signature.addSignifier('grox:Kr7rkKhBHnxEo2OIddayrxZr', "partTraitPart", _signature.getSignifierTypeEnum().COPULA);
-				signature.addSignifier('grox:SW6KX6Y8QRKPpzEoJYoAD4Ya', "partTraitGen", _signature.getSignifierTypeEnum().COPULA);
-				signature.addSignifier('grox:Ov4ItKWDuLMVUAlrbDfgBXkW', "genTraitPart", _signature.getSignifierTypeEnum().COPULA);
-				signature.addSignifier('grox:WW6JqN8iMmQcvwrRYxDub7N7', "genTraitGen", _signature.getSignifierTypeEnum().COPULA);
+				_validateAndAddCopulaSignifier ("grox:Kr7rkKhBHnxEo2OIddayrxZr", "partTraitPart");
+				_validateAndAddCopulaSignifier ("grox:SW6KX6Y8QRKPpzEoJYoAD4Ya", "partTraitGen");
+				_validateAndAddCopulaSignifier ("grox:Ov4ItKWDuLMVUAlrbDfgBXkW", "genTraitPart");
+				_validateAndAddCopulaSignifier ("grox:WW6JqN8iMmQcvwrRYxDub7N7", "genTraitGen");
 
 				// these are the symmetric copulas of existence
-				signature.addSignifier('grox:VW4TIqnPANbf73SKLB1pXWr0', "partWrtTopDomain", _signature.getSignifierTypeEnum().COPULA);
-				signature.addSignifier('grox:mi1vJ1s5GHf2dD8lswGIyddE', "topDomainWrtPart", _signature.getSignifierTypeEnum().COPULA);
+				_validateAndAddCopulaSignifier ( "grox:VW4TIqnPANbf73SKLB1pXWr0", "partWrtTopDomain");
+				_validateAndAddCopulaSignifier ("grox:mi1vJ1s5GHf2dD8lswGIyddE", "topDomainWrtPart", );
 
 				// TODO: logic for these
 				// hasTrait is asymmetric

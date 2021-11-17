@@ -35,7 +35,7 @@ function testSignature()
 	r2.log();
 
 	console.log('multiple prefLabels ----------------------------');
-	for (qname in signature.getQNamesForPrefLabel('isA')) {
+	for (qname in signature.getSignifiersForPrefLabel('isA')) {
 		signature.getSignifier(qname).log();
 	}
 	console.log('---------------------------------------------');
