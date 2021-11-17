@@ -25,10 +25,11 @@ grox.Signature =
 		return function() 
 		{
 			// private attributes, unique to each Signature instance
-			// note: Signature is immutable, there are only getter methods for these
+			// Signature is immutable, there are only getter methods for these
 			let _namespaces = {};
 			let _axioms = [];
 			let _signifiers = {};
+			let _prefLabels = {};
 			let _thisSignature = this;
 
 			// private methods, unique to each Signature instance, with access to private attributes and methods
@@ -99,7 +100,7 @@ grox.Signature =
 						{
 							return _axiomsWithThisAsAttributum;
 						};
-			
+
 						// _Signifier constructor code
 						if (!QName) {throw new Error("Invalid QName for new signifier, " + QName + ".");}
 						if (typeof QName != "string") {throw new Error("When adding a signifier, QName must be a string.");}
@@ -141,7 +142,7 @@ grox.Signature =
 
 					{
 						// private to each _Axiom instance
-						// note: Axiom is immutable, there are only getter methods for these
+						// Axiom is immutable, there are only getter methods for these
 						let _Nomen;
 						let _Copula;
 						let _AttributumSignifier;
@@ -187,7 +188,7 @@ grox.Signature =
 								_Nomen = _thisSignature.addSignifier(Nomen);
 							}
 						}
-						if (!_Nomen) {throw new Error("Invalid Nomen for new Assertion, " + Nomen + ".");}
+						if (!_Nomen) {throw new Error("Invalid Nomen for new Axiom, " + Nomen + ".");}
 						
 						if (grox.isTypeOfSignifier(Copula)) 
 						{
@@ -205,7 +206,7 @@ grox.Signature =
 								_Copula = _thisSignature.addSignifier(Copula, altCopulaLabel );
 							}
 						}
-						if (!_Copula) {throw new Error("Invalid Copula for new Assertion, " + Copula + ".");}
+						if (!_Copula) {throw new Error("Invalid Copula for new Axiom, " + Copula + ".");}
 			
 						if (grox.isTypeOfSignifier(Attributum)) 
 						{
@@ -230,7 +231,7 @@ grox.Signature =
 							if (typeof Attributum == 'string')
 							_AttributumLiteral = Attributum;
 						}
-						if (!_AttributumSignifier && !_AttributumLiteral) {throw new Error("Invalid Attributum for new Assertion, " + Attributum + ".");}
+						if (!_AttributumSignifier && !_AttributumLiteral) {throw new Error("Invalid Attributum for new Axiom, " + Attributum + ".");}
 			
 						_CopulaLabel = _constructCopulaLabel(_Copula,altCopulaLabel);
 			
@@ -322,30 +323,31 @@ grox.Signature =
 			{
 				let newNamespace;
 				if (prefix.indexOf(":") >= 0) {throw new Error("When adding a namespacePrefix, a colon is not allowed in the prefix name.	Specified prefix was " + prefix);}
+				// TODO: shall we validate URI syntax?
 				_namespaces[prefix] = URI;
-				newNamespace = prefix;
+				newNamespace = prefix + ":" + URI;
 				return newNamespace;
 			}
 
 			this.addSignifier = function(QName, prefLabel, signifierType)
 			{
-				let newSignifier;
 				if (_signifiers[QName]) {
-					newSignifier = _signifiers[QName];
-				}
-				else {
-					newSignifier = new _Signifier(QName, prefLabel, signifierType);
-					if (QName.indexOf(":") != 0)
-					{
-						let prefix = QName.split(":")[0];
-						if (_namespaces[prefix] == undefined) {throw new Error("When adding a signifier, QName must use an existing namespacePrefix.	Specified prefix was " + prefix);}
+					return _signifiers[QName];
+				} else {
+					let newSignifier = new _Signifier(QName, prefLabel, signifierType);
+					let newPrefLabel = newSignifier.getPrefLabel();
+					let newQName = newSignifier.getQName();
+					if (_prefLabels[newPrefLabel]) {
+						_prefLabels[newPrefLabel][newQName] = newSignifier;
+					} else {
+						_prefLabels[newPrefLabel] = {};
+						_prefLabels[newPrefLabel][newQName] = newSignifier;
 					}
-
-					_signifiers[QName] = newSignifier;	
+					_signifiers[newQName] = newSignifier;
+					return newSignifier;	
 				}
-				return newSignifier;				
 			};
-			
+
 			this.getSignifier = function(signifierId)
 			{
 				let signifier = _signifiers[signifierId];
@@ -353,12 +355,12 @@ grox.Signature =
 				{
 					signifier = _signifiers[signifierId.getQName()]
 				}
-				let signifierName = "";
-				if (signifier)
-				{
-					signifierName = signifier.getQName();
-				}
 				return signifier;
+			}
+
+			this.getSignifiersForPrefLabel = function(prefLabel)
+			{
+				return _prefLabels[prefLabel];
 			}
 
 			this.addAxiom = function(Nomen, Copula, Attributum, altCopulaLabel)
@@ -384,7 +386,7 @@ grox.Signature =
 				return selectedAxioms;
 			}
 
-			this.getSignifierTypeEnum = function () 
+			this.getSignifierParticipationEnum = function () 
 			{
 				return _signifierParticipationEnum;
 			}
@@ -399,6 +401,7 @@ grox.Signature.prototype =
 {
 }
 
+// helper functions in the grox namespace
 grox.isTypeOfSignature = function (testValue)
 {
 	if (

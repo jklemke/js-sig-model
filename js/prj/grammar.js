@@ -16,10 +16,47 @@ grox.Grammar =
 		return function(signature) 
 		{
 			// private attributes, unique to each Grammar instance
-			// note: Grammar is immutable, there are only getters for these
+			// Grammar is immutable, there are only getters for these
 			let _signature;
+			let _generalizationChains =[];
 
 			// private methods, unique to each Grammar instance, with access to private attributes and methods
+
+			// _GeneralizationChain is an IIFE constructor function which is private to Grammar
+			// it is a linked list from bottomGen to topGen, with transitive links between top and bottom.
+			// two possible initializations:  
+			//		if isTopGen
+			//			subGen becomes bottomGen, subGen and superGen form a link, topGen is null (can be set later)
+			//		if not isTopGen
+			//			subgen becomes bottomGen, subGen and superGen form a link, superGen is set as topGen, which cannot be changed
+			// copula is immutable, topGen is immutable once set.
+			// bottomGen can be changed by setting a new link
+			// new link can be inserted between an existing generalizationLink
+			let _GeneralizationChain = 
+			(
+				// anonymous function which returns the _GeneralizationChain constructor
+				function() {
+					return function(copula, subGen, superGen, isTopGen) 
+					{
+						// private attributes, unique to each _GeneralizationChain instance
+						let _bottomGeneralization;
+						let _topGeneralization;
+						let _generalizationLink = {
+							narrowerGeneralization: null,
+							broaderGeneralization: null
+						}
+
+						// private methods, unique to each _GeneralizationChain instance, with access to private attributes and methods
+						
+						// public _GeneralizationChain methods
+
+						// _GeneralizationChain constructor code
+
+
+					}
+			} 
+			)();
+
 			let _addSemanticWebNamespaces = function ()
 			{
 				_signature.addNamespace('rdf','http://www.w3.org/1999/02/22-rdf-syntax-ns#');
@@ -35,7 +72,7 @@ grox.Grammar =
 
 			let _addCoreCopulaOnlySignifiers = function ()
 			{
-				// these are the symmetric copulas of particularities and generalities
+				// these are the symmetric copulas of particularization and generalization
 				signature.addSignifier("grox:iT4tYHw9xJVf65egdT1hOtNu", 'partWrtGen', _signature.getSignifierTypeEnum().COPULA);
 				signature.addSignifier('grox:Fy28scb0taxYGdYeexBx3365', "genWrtPart", _signature.getSignifierTypeEnum().COPULA);
 				signature.addSignifier('grox:LY41ZUMrKdPh9G3w6b2rxFUY', "subGenWrtSuperGen", _signature.getSignifierTypeEnum().COPULA);
@@ -43,11 +80,15 @@ grox.Grammar =
 				signature.addSignifier('grox:QQ46Ef5vecHgr6ctohqU1pTo', "subGenWrtTopDomain", _signature.getSignifierTypeEnum().COPULA);
 				signature.addSignifier('grox:Wb4bglkQ9PrEt3C7y0YCOqpA', "TopDomainWrtsubGen", _signature.getSignifierTypeEnum().COPULA);
 
-				// these are the asymmetric copulas of traits
+				// these are the asymmetric copulas of traits (characteristics of particularities and generalities)
 				signature.addSignifier('grox:Kr7rkKhBHnxEo2OIddayrxZr', "partTraitPart", _signature.getSignifierTypeEnum().COPULA);
 				signature.addSignifier('grox:SW6KX6Y8QRKPpzEoJYoAD4Ya', "partTraitGen", _signature.getSignifierTypeEnum().COPULA);
 				signature.addSignifier('grox:Ov4ItKWDuLMVUAlrbDfgBXkW', "genTraitPart", _signature.getSignifierTypeEnum().COPULA);
 				signature.addSignifier('grox:WW6JqN8iMmQcvwrRYxDub7N7', "genTraitGen", _signature.getSignifierTypeEnum().COPULA);
+
+				// these are the symmetric copulas of existence
+				signature.addSignifier('grox:VW4TIqnPANbf73SKLB1pXWr0', "partWrtTopDomain", _signature.getSignifierTypeEnum().COPULA);
+				signature.addSignifier('grox:mi1vJ1s5GHf2dD8lswGIyddE', "topDomainWrtPart", _signature.getSignifierTypeEnum().COPULA);
 
 				// TODO: logic for these
 				// hasTrait is asymmetric
@@ -61,6 +102,8 @@ grox.Grammar =
 				// consecutive of enumeration are ordered
 				// item of list is unordered finite list
 				// expression is a molecular, combination of other aggregates
+
+				let genChain = new _GeneralizationChain();
 			}
 
 			// "this" defines a privileged method which is public, unique to each object instance, with access to private attributes and methods

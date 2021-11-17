@@ -22,7 +22,8 @@ function testGrammar()
 	grammar.logSignifier("grox:SW6KX6Y8QRKPpzEoJYoAD4Ya");
 	grammar.logSignifier("grox:Ov4ItKWDuLMVUAlrbDfgBXkW");
 	grammar.logSignifier("grox:WW6JqN8iMmQcvwrRYxDub7N7");
-
+	grammar.logSignifier("grox:VW4TIqnPANbf73SKLB1pXWr0");
+	grammar.logSignifier("grox:mi1vJ1s5GHf2dD8lswGIyddE");
 
 }
 
