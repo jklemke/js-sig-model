@@ -9,6 +9,20 @@ function testGrammar()
 
 	grammar.logSignifier("rdf:type");
 	grammar.logSignifier("grox:hasTrait");
+	grammar.logSignifier("grox:iT4tYHw9xJVf65egdT1hOtNu");
+	grammar.logSignifier("partWrtGen");
+
+	grammar.logSignifier("grox:iT4tYHw9xJVf65egdT1hOtNu");
+	grammar.logSignifier("grox:Fy28scb0taxYGdYeexBx3365");
+	grammar.logSignifier("grox:LY41ZUMrKdPh9G3w6b2rxFUY");
+	grammar.logSignifier("grox:QT64ORWiazZEsiU9k2pfhDUf");
+	grammar.logSignifier("grox:QQ46Ef5vecHgr6ctohqU1pTo ");
+	grammar.logSignifier("grox:Wb4bglkQ9PrEt3C7y0YCOqpA");
+	grammar.logSignifier("grox:Kr7rkKhBHnxEo2OIddayrxZr");
+	grammar.logSignifier("grox:SW6KX6Y8QRKPpzEoJYoAD4Ya");
+	grammar.logSignifier("grox:Ov4ItKWDuLMVUAlrbDfgBXkW");
+	grammar.logSignifier("grox:WW6JqN8iMmQcvwrRYxDub7N7");
+
 
 }
 

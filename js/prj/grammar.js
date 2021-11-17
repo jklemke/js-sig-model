@@ -35,20 +35,19 @@ grox.Grammar =
 
 			let _addCoreCopulaOnlySignifiers = function ()
 			{
-				// hasTrait is a binary relation expressed in triple form.  kutya barna
-				s = signature.addSignifier('grox:hasTrait', undefined, _signature.getSignifierTypeEnum().COPULA);
+				// these are the symmetric copulas of particularities and generalities
+				signature.addSignifier("grox:iT4tYHw9xJVf65egdT1hOtNu", 'partWrtGen', _signature.getSignifierTypeEnum().COPULA);
+				signature.addSignifier('grox:Fy28scb0taxYGdYeexBx3365', "genWrtPart", _signature.getSignifierTypeEnum().COPULA);
+				signature.addSignifier('grox:LY41ZUMrKdPh9G3w6b2rxFUY', "subGenWrtSuperGen", _signature.getSignifierTypeEnum().COPULA);
+				signature.addSignifier('grox:QT64ORWiazZEsiU9k2pfhDUf', "superGenWrtSubGen", _signature.getSignifierTypeEnum().COPULA);
+				signature.addSignifier('grox:QQ46Ef5vecHgr6ctohqU1pTo', "subGenWrtTopDomain", _signature.getSignifierTypeEnum().COPULA);
+				signature.addSignifier('grox:Wb4bglkQ9PrEt3C7y0YCOqpA', "TopDomainWrtsubGen", _signature.getSignifierTypeEnum().COPULA);
 
-				// these are the varieties of aggregation
-				signature.addSignifier('grox:isSpecimenOfSpecies', undefined, _signature.getSignifierTypeEnum().COPULA);
-				signature.addSignifier('grox:isSubgenusOfSupergenus', undefined, _signature.getSignifierTypeEnum().COPULA);
-				signature.addSignifier('grox:isSituationOfDomain', undefined, _signature.getSignifierTypeEnum().COPULA);
-				signature.addSignifier('grox:isInstanceOfClass', undefined, _signature.getSignifierTypeEnum().COPULA);
-				signature.addSignifier('grox:isSubclassOfSuperclass', undefined, _signature.getSignifierTypeEnum().COPULA);
-				signature.addSignifier('grox:isPrototypeOfPlurality', undefined, _signature.getSignifierTypeEnum().COPULA);
-				signature.addSignifier('grox:isConsecutiveOfEnumeration', undefined, _signature.getSignifierTypeEnum().COPULA);
-				signature.addSignifier('grox:isItemOfList', undefined, _signature.getSignifierTypeEnum().COPULA);
-				signature.addSignifier('grox:isResultantOfExpression', undefined, _signature.getSignifierTypeEnum().COPULA);
-				
+				// these are the asymmetric copulas of traits
+				signature.addSignifier('grox:Kr7rkKhBHnxEo2OIddayrxZr', "partTraitPart", _signature.getSignifierTypeEnum().COPULA);
+				signature.addSignifier('grox:SW6KX6Y8QRKPpzEoJYoAD4Ya', "partTraitGen", _signature.getSignifierTypeEnum().COPULA);
+				signature.addSignifier('grox:Ov4ItKWDuLMVUAlrbDfgBXkW', "genTraitPart", _signature.getSignifierTypeEnum().COPULA);
+				signature.addSignifier('grox:WW6JqN8iMmQcvwrRYxDub7N7', "genTraitGen", _signature.getSignifierTypeEnum().COPULA);
 
 				// TODO: logic for these
 				// hasTrait is asymmetric
