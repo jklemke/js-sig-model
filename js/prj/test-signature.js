@@ -6,7 +6,6 @@ function testSignature()
 {   
   // TODO: reverse this, pass the schema to the model
   let signature = new grox.Signature();
-//  let model = new grox.Model();
 
   // TODO: add logic in the grammar for each of these default namespaces
   signature.addNamespace('grox','http://www.grox.info/');

@@ -11,7 +11,7 @@ grox.Signature =
 	function() 
 	{
 		// private static attribute (defined once and shared by all Signature objects)
-		const _signifierTypeEnum = {
+		const _signifierParticipationEnum = {
 			NOMEN:	1,
 			COPULA:	2,
 			NOMEN_COPULA: 3,
@@ -22,7 +22,7 @@ grox.Signature =
 		}
 
 		// the actual constructor function which gets invoked by new Signature()
-		return function(model) 
+		return function() 
 		{
 			// private attributes, unique to each Signature instance
 			// note: Signature is immutable, there are only getter methods for these
@@ -32,70 +32,12 @@ grox.Signature =
 			let _thisSignature = this;
 
 			// private methods, unique to each Signature instance, with access to private attributes and methods
-			let _isTypeOfSignature = function (testValue)
-			{
-				if (
-					testValue == undefined ||
-					typeof testValue != "object" ||
-					testValue.addNamespace == undefined || 
-					testValue.addSignifier == undefined || 
-					testValue.getSignifier == undefined ||
-					testValue.addAxiom == undefined ||
-					testValue.getAxiomsWithLiteralAsAttributum == undefined ||
-					testValue.getSignifierTypeEnum == undefined
-				)
-				{
-					return false;
-				} 
-				else 
-				{
-					return true;
-				}
-			}
-			let _isTypeOfSignifier = function(testValue)
-			{
-				if (
-					testValue == undefined ||
-					typeof testValue != "object" ||
-					testValue.getQName == undefined || 
-					testValue.notifyOfParticipationAsNomen == undefined || 
-					testValue.notifyOfParticipationAsCopula == undefined || 
-					testValue.notifyOfParticipationAsAttributum == undefined 
-					)
-				{
-					return false;
-				} 
-				else	
-				{
-					return true;
-				}
-			}
-
-			let _isTypeOfAxiom = function(testValue)
-			{
-				if (
-					testValue == undefined ||
-					typeof testValue != "object" ||
-					testValue.getNomen == undefined || 
-					testValue.getCopula == undefined || 
-					testValue.getCopulaLabel == undefined || 
-					testValue.getAttributum == undefined 
-					)	
-				{
-					return false;
-				} 
-				else	
-				{
-					return true;
-				}
-			}
-
 			// _Signifier is an IIFE constructor function which is private to Signature
 			let _Signifier = 
 			(
 				function () 
 				{
-					return function(QName, prefLabel, signifierType)
+					return function(QName, prefLabel, signifierParticipation)
 					{
 						// private to each _Signifier instance
 						// note: Signifier is immutable, there are only getter methods for these
@@ -104,7 +46,7 @@ grox.Signature =
 						let _axiomsWithThisAsNomen = [];
 						let _axiomsWithThisAsCopula = [];
 						let _axiomsWithThisAsAttributum = [];
-						let _signifierType;
+						let _signifierParticipation;
 			
 						// public _Signifier methods
 						this.notifyOfParticipationAsNomen = function(axiom) 
@@ -136,9 +78,9 @@ grox.Signature =
 							return _prefLabel;
 						};
 
-						this.getSignifierType = function() 
+						this.getSignifierParticipation = function() 
 						{
-							return _signifierType;
+							return _signifierParticipation;
 						};			
 
 						// TODO: these get statements are the beginning of a SELECT API
@@ -165,13 +107,13 @@ grox.Signature =
 						if (QName.indexOf(":") != QName.lastIndexOf(":"))	{throw new Error("When adding a signifier, only one colon is allowed in QName string.");} 
 						if (QName.indexOf(":") == QName.length - 1)	{throw new Error("When adding a signifier, at least one additional character must follow the colon in QName string.");} 				
 						
-						if (signifierType != undefined) {
-							if (!signifierType) {throw new Error("When adding a signifier, if signifierType is specified it must be a signifierType enumeration.");}	
-							_signifierType = signifierType;
+						if (signifierParticipation != undefined) {
+							if (!signifierParticipation) {throw new Error("When adding a signifier, if signifierType is specified it must be a signifierType enumeration.");}	
+							_signifierParticipation = signifierParticipation;
 						}
 
-						if (!_signifierType) {
-							_signifierType = _signifierTypeEnum.NOMEN_ATTRIBUTUM;
+						if (!_signifierParticipation) {
+							_signifierParticipation = _signifierParticipationEnum.NOMEN_ATTRIBUTUM;
 						}
 		
 						if (!prefLabel) {
@@ -229,7 +171,7 @@ grox.Signature =
 						};
 			
 						// _Axiom constructor code
-						if (_isTypeOfSignifier(Nomen))
+						if (grox.isTypeOfSignifier(Nomen))
 						{
 							_Nomen = Nomen;
 						} 
@@ -247,7 +189,7 @@ grox.Signature =
 						}
 						if (!_Nomen) {throw new Error("Invalid Nomen for new Assertion, " + Nomen + ".");}
 						
-						if (_isTypeOfSignifier(Copula)) 
+						if (grox.isTypeOfSignifier(Copula)) 
 						{
 							_Copula = Copula;
 						} 
@@ -265,7 +207,7 @@ grox.Signature =
 						}
 						if (!_Copula) {throw new Error("Invalid Copula for new Assertion, " + Copula + ".");}
 			
-						if (_isTypeOfSignifier(Attributum)) 
+						if (grox.isTypeOfSignifier(Attributum)) 
 						{
 							_AttributumSignifier = Attributum;
 						} 
@@ -294,7 +236,7 @@ grox.Signature =
 			
 						_Nomen.notifyOfParticipationAsNomen(this);
 						_Copula.notifyOfParticipationAsCopula(this);
-						if (_isTypeOfSignifier(_AttributumSignifier)) 
+						if (grox.isTypeOfSignifier(_AttributumSignifier)) 
 						{
 							_AttributumSignifier.notifyOfParticipationAsAttributum(this);
 						}
@@ -307,7 +249,7 @@ grox.Signature =
 						{
 							CopulaLabel = altCopulaLabel;
 						} 
-						else if(_isTypeOfSignifier(Copula))
+						else if(grox.isTypeOfSignifier(Copula))
 						{
 							CopulaLabel = Copula.getPrefLabel();
 						}
@@ -325,28 +267,28 @@ grox.Signature =
 					let msg = "Signifier: ";
 					msg = msg + "QName = " + this.getQName();
 					msg = msg + ", prefLabel = " + this.getPrefLabel();
-					let signifierType = this.getSignifierType()
-					if (signifierType) {
-						switch (signifierType) {
-							case _signifierTypeEnum.NOMEN:
+					let signifierParticipation = this.getSignifierParticipation();
+					if (signifierParticipation) {
+						switch (signifierParticipation) {
+							case _signifierParticipationEnum.NOMEN:
 								msg = msg + ", signifierType = " + "NOMEN";
 								break;
-							case _signifierTypeEnum.COPULA:
+							case _signifierParticipationEnum.COPULA:
 								msg = msg + ", signifierType = " + "COPULA";
 								break;
-							case _signifierTypeEnum.NOMEN_COPULA:
+							case _signifierParticipationEnum.NOMEN_COPULA:
 								msg = msg + ", signifierType = " + "NOMEN_COPULA";
 								break;
-							case _signifierTypeEnum.ATTRIBUTUM:
+							case _signifierParticipationEnum.ATTRIBUTUM:
 								msg = msg + ", signifierType = " + "ATTRIBUTUM";
 								break;
-							case _signifierTypeEnum.NOMEN_ATTRIBUTUM:
+							case _signifierParticipationEnum.NOMEN_ATTRIBUTUM:
 								msg = msg + ", signifierType = " + "NOMEN_ATTRIBUTUM";
 								break;
-							case _signifierTypeEnum.COPULA_ATTRIBUTUM:
+							case _signifierParticipationEnum.COPULA_ATTRIBUTUM:
 								msg = msg + ", signifierType = " + "COPULA_ATTRIBUTUM";
 								break;
-							case _signifierTypeEnum.NOMEN_COPULA_ATTRIBUTUM:
+							case _signifierParticipationEnum.NOMEN_COPULA_ATTRIBUTUM:
 								msg = msg + ", signifierType = " + "NOMEN_COPULA_ATTRIBUTUM";
 								break;
 						}						
@@ -363,7 +305,7 @@ grox.Signature =
 				{
 					let msg	= "Nomen	" + this.getNomen().getPrefLabel() + "\nCopula	" + this.getCopula().getPrefLabel()	+ "\nAttributum	";
 					let testAttributum = this.getAttributum();
-					if (_isTypeOfSignifier(testAttributum))
+					if (grox.isTypeOfSignifier(testAttributum))
 					{
 						msg += testAttributum.getPrefLabel();
 					}
@@ -407,7 +349,7 @@ grox.Signature =
 			this.getSignifier = function(signifierId)
 			{
 				let signifier = _signifiers[signifierId];
-				if (!signifier && _isTypeOfSignifier(signifierId))
+				if (!signifier && grox.isTypeOfSignifier(signifierId))
 				{
 					signifier = _signifiers[signifierId.getQName()]
 				}
@@ -444,22 +386,7 @@ grox.Signature =
 
 			this.getSignifierTypeEnum = function () 
 			{
-				return _signifierTypeEnum;
-			}
-
-			this.isTypeOfSignature = function (testValue)
-			{
-				return _isTypeOfSignature (testValue);
-			}
-
-			this.isTypeOfSignifier = function (testValue)
-			{
-				return _isTypeOfSignifier (testValue);
-			}
-
-			this.isTypeOfAxiom = function (testValue)
-			{
-				return _isTypeOfAxiom (testValue);
+				return _signifierParticipationEnum;
 			}
 
 			// constructor code for Signature (runs once when the Attributum is instantiated with "new")
@@ -471,3 +398,63 @@ grox.Signature =
 grox.Signature.prototype = 
 {
 }
+
+grox.isTypeOfSignature = function (testValue)
+{
+	if (
+		testValue == undefined ||
+		typeof testValue != "object" ||
+		testValue.addNamespace == undefined || 
+		testValue.addSignifier == undefined || 
+		testValue.getSignifier == undefined ||
+		testValue.addAxiom == undefined ||
+		testValue.getAxiomsWithLiteralAsAttributum == undefined ||
+		testValue.getSignifierTypeEnum == undefined
+	)
+	{
+		return false;
+	} 
+	else 
+	{
+		return true;
+	}
+}
+
+grox.isTypeOfSignifier = function(testValue)
+{
+	if (
+		testValue == undefined ||
+		typeof testValue != "object" ||
+		testValue.getQName == undefined || 
+		testValue.notifyOfParticipationAsNomen == undefined || 
+		testValue.notifyOfParticipationAsCopula == undefined || 
+		testValue.notifyOfParticipationAsAttributum == undefined 
+		)
+	{
+		return false;
+	} 
+	else	
+	{
+		return true;
+	}
+}
+
+grox.isTypeOfAxiom = function(testValue)
+{
+	if (
+		testValue == undefined ||
+		typeof testValue != "object" ||
+		testValue.getNomen == undefined || 
+		testValue.getCopula == undefined || 
+		testValue.getCopulaLabel == undefined || 
+		testValue.getAttributum == undefined 
+		)	
+	{
+		return false;
+	} 
+	else	
+	{
+		return true;
+	}
+}
+

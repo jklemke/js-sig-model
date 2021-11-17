@@ -6,5 +6,11 @@ function testGrammar()
 {
 	let signature = new grox.Signature();
 	let grammar = new grox.Grammar(signature);
+
+	grammar.logSignifier("rdf:type");
+	grammar.logSignifier("grox:hasTrait");
+
 }
+
+
 

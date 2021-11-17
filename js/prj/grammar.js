@@ -29,17 +29,39 @@ grox.Grammar =
 				_signature.addNamespace('ex','http://www.example.org/');
 				_signature.addNamespace('xsd','http://www.w3.org/2001/XMLmodel#');
 				_signature.addNamespace('skos','http://www.w3.org/2004/02/skos/core#');
-				_signature.addNamespace('foaf','http://xmlns.com/foaf/0.1/');			
+				_signature.addNamespace('foaf','http://xmlns.com/foaf/0.1/');
 				_signature.addNamespace('grox','http://www.grox.info/');
 			}
 
-			let _addCoreSignifiers = function ()
+			let _addCoreCopulaOnlySignifiers = function ()
 			{
-				console.log(_signature.getSignifierTypeEnum().COPULA);
-				let rdftype = signature.addSignifier('rdf:type','isA', _signature.getSignifierTypeEnum().COPULA);
-				let groxtrait = signature.addSignifier('grox:hasTrait', undefined, _signature.getSignifierTypeEnum().COPULA);
-				rdftype.log();
-				groxtrait.log();
+				// hasTrait is a binary relation expressed in triple form.  kutya barna
+				s = signature.addSignifier('grox:hasTrait', undefined, _signature.getSignifierTypeEnum().COPULA);
+
+				// these are the varieties of aggregation
+				signature.addSignifier('grox:isSpecimenOfSpecies', undefined, _signature.getSignifierTypeEnum().COPULA);
+				signature.addSignifier('grox:isSubgenusOfSupergenus', undefined, _signature.getSignifierTypeEnum().COPULA);
+				signature.addSignifier('grox:isSituationOfDomain', undefined, _signature.getSignifierTypeEnum().COPULA);
+				signature.addSignifier('grox:isInstanceOfClass', undefined, _signature.getSignifierTypeEnum().COPULA);
+				signature.addSignifier('grox:isSubclassOfSuperclass', undefined, _signature.getSignifierTypeEnum().COPULA);
+				signature.addSignifier('grox:isPrototypeOfPlurality', undefined, _signature.getSignifierTypeEnum().COPULA);
+				signature.addSignifier('grox:isConsecutiveOfEnumeration', undefined, _signature.getSignifierTypeEnum().COPULA);
+				signature.addSignifier('grox:isItemOfList', undefined, _signature.getSignifierTypeEnum().COPULA);
+				signature.addSignifier('grox:isResultantOfExpression', undefined, _signature.getSignifierTypeEnum().COPULA);
+				
+
+				// TODO: logic for these
+				// hasTrait is asymmetric
+				// specimenOfSpecies is inverse
+				// species, genus, supergenus is transitive
+				// instance, class, superclass is transitive
+				// domain is top level aggregate for all aggregate. a situation is anything in a domain (existence)
+				// specimen, species and genus are categorization, that is they do not copy trait
+				// instance, class, and superclass are classification, that is they do copy traits
+				// every item in the plurality must have the prototypical traits of the prototype
+				// consecutive of enumeration are ordered
+				// item of list is unordered finite list
+				// expression is a molecular, combination of other aggregates
 			}
 
 			// "this" defines a privileged method which is public, unique to each object instance, with access to private attributes and methods
@@ -71,7 +93,7 @@ grox.Grammar =
 			}
 
 			// constructor code for Grammar, which runs once when the object is instantiated with "new Grammar()"
-			if (signature.isTypeOfSignature(signature)) 
+			if (grox.isTypeOfSignature(signature)) 
 			{
 					_signature = signature;
 			} else {
@@ -79,7 +101,7 @@ grox.Grammar =
 			}
 
 			_addSemanticWebNamespaces();
-			_addCoreSignifiers();
+			_addCoreCopulaOnlySignifiers();
 		}
 	}
 )();
@@ -93,6 +115,7 @@ grox.Grammar.prototype =
 	{
 		let signifier = this.getSignifier(signifierId);
 		if (signifier) {signifier.log();}
+		else {console.log("Signifier: " + signifierId + " is undefined")}
 	}
 	,
 	// TODO: need fully fleshed out getAxiomAPI
