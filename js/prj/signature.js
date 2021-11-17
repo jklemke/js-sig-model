@@ -358,7 +358,7 @@ grox.Signature =
 				return signifier;
 			}
 
-			this.getSignifiersForPrefLabel = function(prefLabel)
+			this.getQNamesForPrefLabel = function(prefLabel)
 			{
 				return _prefLabels[prefLabel];
 			}

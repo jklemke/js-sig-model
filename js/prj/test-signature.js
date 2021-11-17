@@ -34,6 +34,12 @@ function testSignature()
 	let r2 = signature.getSignifier('rdf:type');
 	r2.log();
 
+	console.log('multiple prefLabels ----------------------------');
+	for (qname in signature.getQNamesForPrefLabel('isA')) {
+		signature.getSignifier(qname).log();
+	}
+	console.log('---------------------------------------------');
+
 	signature.addSignifier('skos:related','isRelatedTo');
 	
 	let s = signature.addSignifier(':Sam');

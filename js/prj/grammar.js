@@ -72,6 +72,7 @@ grox.Grammar =
 
 			let _addCoreCopulaOnlySignifiers = function ()
 			{
+				// for our purposes here, we will never re-use a prefLabel for different QNames
 				// these are the symmetric copulas of particularization and generalization
 				signature.addSignifier("grox:iT4tYHw9xJVf65egdT1hOtNu", 'partWrtGen', _signature.getSignifierTypeEnum().COPULA);
 				signature.addSignifier('grox:Fy28scb0taxYGdYeexBx3365', "genWrtPart", _signature.getSignifierTypeEnum().COPULA);
