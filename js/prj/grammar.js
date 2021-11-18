@@ -16,9 +16,10 @@ grox.Grammar =
 		return function(signature) 
 		{
 			// private attributes, unique to each Grammar instance
-			// Grammar is immutable, there are only getters for these
+			// Grammar is immutable, there are only getters and adders for these
 			let _signature;
 			let _generalizationChains =[];
+			let _disjointAttributumSets = [];
 
 			// private methods, unique to each Grammar instance, with access to private attributes and methods
 
@@ -57,6 +58,81 @@ grox.Grammar =
 			} 
 			)();
 
+			// _DisjointAttributum is an IIFE constructor function which is private to Grammar
+			// it tracks sets of signifiers which are not allowed to belong to the same nomen,copula pair
+			let _DisjointAttributumSet = 
+			(
+				// anonymous function which returns the _DisjointAttributumSet constructor
+				function() {
+					return function(attributumArray) 
+					{
+						// private attributes, unique to each _DisjointAttributumSet instance
+						let _disjointAttributums = {};
+						let _nomenCopulaPairs = [
+							{
+								nomen: {},
+								copula: {}
+							}
+						]
+
+						// private methods, unique to each _DisjointAttributumSet instance, with access to private attributes and methods
+						
+						// public _DisjointAttributumSet methods
+						this.getAttributumSet = function () {
+							return _disjointAttributums;
+						}
+
+						this.addNomenCopulaPair = function (nomen, copula) {
+							let validatedNomen = _signature.getSignifier(nomen);
+							if (!validatedNomen) {throw new Error ("invalid nomen for disjointAttributumSet: " + nomen);}
+							let validatedCopula = _signature.getSignifier(copula);
+							if (!validatedCopula) {throw new Error ("invalid copula for disjointAttributumSet: " + copula);}
+							_nomenCopulaPairs.push({nomen: validatedNomen, copula: validatedCopula});
+						}
+
+						this.getNomenCopulaPairs = function () {
+							return _nomenCopulaPairs;
+						}
+
+						// _DisjointAttributumSet constructor code
+						let validatedAttributumArray = [];
+						for (let signifierId in attributumArray) {
+							let signifier = _signature.getSignifier(signifierId);
+							if (!signifier) {throw new Error ("invalid signifier for disjointAttributumSet: " + signifierId);}
+							validatedAttributumArray.push(signifier);
+						}
+						if (validatedAttributumArray) {
+							for (let signifier in validatedAttributumArray) {
+								let qname = signifier.getQName();
+								_disjointAttributums[qname] = signifier;
+							}
+						}
+					}
+				} 
+			)();
+
+			let _getDisjointSetsforAttributum = function (attributum) {
+				let existingDisjointSets = [];
+				for (let i = 0; i < _disjointAttributumSets.length; i++) {
+					let attributumSet = _disjointAttributumSets[i].getAttributumSet();
+					if (attributumSet[attributum]) {
+						existingDisjointSets.push(disjointAttributumSet);
+						break;  // TODO: correct use of break?
+					}
+					return existingDisjointSets;
+				}
+
+				/////
+/*				for (let disjointAttributumSet in _disjointAttributumSets) {
+					let attributumSet = disjointAttributumSet.getAttributumSet();
+					if (attributumSet[attributum]) {
+						existingDisjointSets.push(disjointAttributumSet);
+						break;  // TODO: correct use of break?
+					}
+					return existingDisjointSets;
+				}*/
+			}
+
 			// grox.Signature allows duplicate prefLabels, but for the default signifiers in grox.Grammar we do not allow duplicate prefLabels
 			let _checkForDuplicatePrefLabels = function (prefLabel) {
 				let existingSignifiersForPrefLabel = signature.getSignifiersForPrefLabel(prefLabel);
@@ -74,7 +150,7 @@ grox.Grammar =
 				_signature.addSignifier(QName, prefLabel, _signature.getSignifierParticipationEnum().COPULA_ATTRIBUTUM);
 			}
 
-			let _addSemanticWebNamespaces = function ()
+			let _addCoreNamespaces = function ()
 			{
 				_signature.addNamespace('rdf','http://www.w3.org/1999/02/22-rdf-syntax-ns#');
 				_signature.addNamespace('rdfs','http://www.w3.org/2000/01/rdf-model#');
@@ -98,14 +174,17 @@ grox.Grammar =
 				_validateAndAddCopulaAttributumSignifier ("grox:Wb4bglkQ9PrEt3C7y0YCOqpA", "topDomainWrtsubGen");
 
 				// the asymmetric copulas of traits 
-				_validateAndAddCopulaAttributumSignifier ("grox:Kr7rkKhBHnxEo2OIddayrxZr", "partTraitPart");
-				_validateAndAddCopulaAttributumSignifier ("grox:SW6KX6Y8QRKPpzEoJYoAD4Ya", "partTraitGen");
-				_validateAndAddCopulaAttributumSignifier ("grox:Ov4ItKWDuLMVUAlrbDfgBXkW", "genTraitPart");
-				_validateAndAddCopulaAttributumSignifier ("grox:WW6JqN8iMmQcvwrRYxDub7N7", "genTraitGen");
+				_validateAndAddCopulaAttributumSignifier ("grox:Kr7rkKhBHnxEo2OIddayrxZr", "partHasTraitPart");
+				_validateAndAddCopulaAttributumSignifier ("grox:SW6KX6Y8QRKPpzEoJYoAD4Ya", "partHasTraitGen");
+				_validateAndAddCopulaAttributumSignifier ("grox:Ov4ItKWDuLMVUAlrbDfgBXkW", "genHasTraitPart");
+				_validateAndAddCopulaAttributumSignifier ("grox:WW6JqN8iMmQcvwrRYxDub7N7", "genHasTraitGen");
 				
-				// the symmetric copulas of existence (situation of a particular in a domain)
+				// the symmetric copulas of situation (existence of a particular in a domain)
 				_validateAndAddCopulaAttributumSignifier ( "grox:VW4TIqnPANbf73SKLB1pXWr0", "partWrtTopDomain");
-				_validateAndAddCopulaAttributumSignifier ("grox:mi1vJ1s5GHf2dD8lswGIyddE", "topDomainWrtPart", );
+				_validateAndAddCopulaAttributumSignifier ("grox:mi1vJ1s5GHf2dD8lswGIyddE", "topDomainWrtPart");
+
+				// copulas of trait hierarchies
+				_validateAndAddCopulaAttributumSignifier ("grox:OT7cRTTm9suVcCmdkxVXn9hx", "isSubTraitOf");
 
 				// TODO: logic for these
 				// hasTrait is asymmetric
@@ -120,12 +199,27 @@ grox.Grammar =
 				// item of list is unordered finite list
 				// expression is a molecular, combination of other aggregates
 
+				// temp tests to ensure these classes can be instantiated
 				let genChain = new _GeneralizationChain();
+				_generalizationChains.push(genChain);
+				let disjointAttributumSet = new _DisjointAttributumSet();
+				_disjointAttributumSets.push(disjointAttributumSet);
 			}
 
 			// "this" defines a privileged method which is public, unique to each object instance, with access to private attributes and methods
 			// TODO: the basic idea is for a Grammar to manipulate a Signature
 			// so Grammar has a facade for the public methods of Signature
+			this.addDisjointAttributumSet = function(attributumArray)
+			{
+				let disjointAttributumSet = new _DisjointAttributumSet(attributumArray);
+				_disjointAttributumSets.push(disjointAttributumSet);
+			}
+
+			this.getDisjointAttributumSetForAttributum = function(signifierId)
+			{
+
+			}
+
 			this.addNamespace = function()
 			{
 				return _signature.addNamespace(prefix, URI);
@@ -148,6 +242,32 @@ grox.Grammar =
 			
 			this.addAxiom = function(nomen, copula, attributum, altCopulaLabel)
 			{
+				let nomenSig = _signature.getSignifier(nomen);
+				if (!nomenSig) {throw new Error ("invalid nomen for new Axiom: " + nomen); }
+				let copulaSig = _signature.getSignifier(copula);
+				if (!copulaSig) {throw new Error ("invalid copula for new Axiom: " + copula); }
+				let attributumSig = _signature.getSignifier(attributum);
+				if (!attributumSig) {throw new Error ("invalid attributum for new Axiom: " + attributum); }
+
+				let nomenQName = nomenSig.getQName();
+				let copulaQName = copulaSig.getQName();
+				let attributumQName = attributumSig.getQName();
+
+				let disjointAttributumSets = _getDisjointSetsforAttributum();
+
+				// TODO: logic here to test for disjoint attributums
+				for (let disjointAttributumSet in disjointAttributumSets) {
+					let nomenCopulaPairs = disjointAttributumSet.getNomenCopulaPairs();
+					for (let nomenCopulaPair in nomenCopulaPairs) {
+						if (nomenCopulaPair.nomen ==  nomenQName && nomenCopulaPair.copula == copulaQName) {
+							let errorMsg = "nomen " + nomenQName + " and copula " + copulaQName + " already been assigned an attribute in disjoint set \n";
+							for (let attributum in disjointAttributumSet) {
+								errorMsg += "\tattributum\n"
+							}
+							throw new Error(errorMsg);
+						}
+					}
+				}
 				return _signature.addAxiom(nomen, copula, attributum, altCopulaLabel);
 			}
 
@@ -170,7 +290,7 @@ grox.Grammar =
 				{throw new Error("Invalid signature object for new Grammar(), " + signature + ".");}
 			}
 
-			_addSemanticWebNamespaces();
+			_addCoreNamespaces();
 			_addCoreSignifiers();
 		}
 	}
