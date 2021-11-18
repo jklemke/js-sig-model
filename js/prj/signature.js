@@ -401,7 +401,7 @@ grox.Signature.prototype =
 {
 }
 
-// helper functions in the grox namespace
+// utility functions in the grox namespace
 grox.isTypeOfSignature = function (testValue)
 {
 	if (
@@ -412,7 +412,8 @@ grox.isTypeOfSignature = function (testValue)
 		testValue.getSignifier == undefined ||
 		testValue.addAxiom == undefined ||
 		testValue.getAxiomsWithLiteralAsAttributum == undefined ||
-		testValue.getSignifierParticipationEnum == undefined
+		testValue.getSignifierParticipationEnum == undefined ||
+		testValue.getSignifiersForPrefLabel == undefined
 	)
 	{
 		return false;

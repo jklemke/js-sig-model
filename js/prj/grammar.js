@@ -57,6 +57,23 @@ grox.Grammar =
 			} 
 			)();
 
+			// grox.Signature allows duplicate prefLabels, but for the default signifiers in grox.Grammar we do not allow duplicate prefLabels
+			let _checkForDuplicatePrefLabels = function (prefLabel) {
+				let existingSignifiersForPrefLabel = signature.getSignifiersForPrefLabel(prefLabel);
+				if (existingSignifiersForPrefLabel) {
+					let existingQNames;
+					for (sigId in existingSignifiersForPrefLabel) {
+						existingQNames = sigId + " ";
+					}
+					throw new Error("prefLabel = " + prefLabel + " has already been used for QName = " + existingQNames );
+				}
+			}
+
+			let _validateAndAddCopulaAttributumSignifier = function (QName, prefLabel) {
+				_checkForDuplicatePrefLabels(prefLabel);
+				_signature.addSignifier(QName, prefLabel, _signature.getSignifierParticipationEnum().COPULA_ATTRIBUTUM);
+			}
+
 			let _addSemanticWebNamespaces = function ()
 			{
 				_signature.addNamespace('rdf','http://www.w3.org/1999/02/22-rdf-syntax-ns#');
@@ -70,44 +87,25 @@ grox.Grammar =
 				_signature.addNamespace('grox','http://www.grox.info/');
 			}
 
-			let _checkForDuplicatePrefLabels = function (prefLabel) {
-				let existingSignifiersForPrefLabel = signature.getSignifiersForPrefLabel(prefLabel);
-				if (existingSignifiersForPrefLabel) {
-					let existingQName;
-					for (sigId in existingSignifiersForPrefLabel) {
-						existingQName = sigId + " ";
-					}
-					throw new Error("prefLabel = " + prefLabel + " has already been used for QName = " + existingQName ) 
-				}
-			}
-
-			let _validateAndAddCopulaSignifier = function (QName, prefLabel) {
-				_checkForDuplicatePrefLabels(prefLabel);
-				signature.addSignifier(QName, prefLabel, _signature.getSignifierParticipationEnum().COPULA);
-			}
-
-			let _addCoreCopulaOnlySignifiers = function ()
+			let _addCoreSignifiers = function ()
 			{
-				// for our purposes here, we will never re-use a prefLabel for different QNames
-				// these are the symmetric copulas of particularization and generalization
-				let newPrefLabel;
+				// the symmetric copulas of particularization and generalization
+				_validateAndAddCopulaAttributumSignifier ("grox:iT4tYHw9xJVf65egdT1hOtNu", "partWrtGen");
+				_validateAndAddCopulaAttributumSignifier ("grox:Fy28scb0taxYGdYeexBx3365", "genWrtPart");
+				_validateAndAddCopulaAttributumSignifier ("grox:LY41ZUMrKdPh9G3w6b2rxFUY", "subGenWrtSuperGen");
+				_validateAndAddCopulaAttributumSignifier ("grox:QT64ORWiazZEsiU9k2pfhDUf", "superGenWrtSubGen");
+				_validateAndAddCopulaAttributumSignifier ("grox:QQ46Ef5vecHgr6ctohqU1pTo", "subGenWrtTopDomain");
+				_validateAndAddCopulaAttributumSignifier ("grox:Wb4bglkQ9PrEt3C7y0YCOqpA", "topDomainWrtsubGen");
 
-				_validateAndAddCopulaSignifier ("grox:iT4tYHw9xJVf65egdT1hOtNu", "partWrtGen");
-				_validateAndAddCopulaSignifier ("grox:Fy28scb0taxYGdYeexBx3365", "genWrtPart");
-				_validateAndAddCopulaSignifier ("grox:LY41ZUMrKdPh9G3w6b2rxFUY", "subGenWrtSuperGen");
-				_validateAndAddCopulaSignifier ("grox:QT64ORWiazZEsiU9k2pfhDUf", "superGenWrtSubGen");
-				_validateAndAddCopulaSignifier ("grox:QQ46Ef5vecHgr6ctohqU1pTo", "subGenWrtTopDomain");
-				_validateAndAddCopulaSignifier ("grox:Wb4bglkQ9PrEt3C7y0YCOqpA", "TopDomainWrtsubGen");
-
-				// these are the asymmetric copulas of traits (characteristics of particularities and generalities)
-				_validateAndAddCopulaSignifier ("grox:Kr7rkKhBHnxEo2OIddayrxZr", "partTraitPart");
-				_validateAndAddCopulaSignifier ("grox:SW6KX6Y8QRKPpzEoJYoAD4Ya", "partTraitGen");
-				_validateAndAddCopulaSignifier ("grox:Ov4ItKWDuLMVUAlrbDfgBXkW", "genTraitPart");
-				_validateAndAddCopulaSignifier ("grox:WW6JqN8iMmQcvwrRYxDub7N7", "genTraitGen");
-
-				// these are the symmetric copulas of existence
-				_validateAndAddCopulaSignifier ( "grox:VW4TIqnPANbf73SKLB1pXWr0", "partWrtTopDomain");
-				_validateAndAddCopulaSignifier ("grox:mi1vJ1s5GHf2dD8lswGIyddE", "topDomainWrtPart", );
+				// the asymmetric copulas of traits 
+				_validateAndAddCopulaAttributumSignifier ("grox:Kr7rkKhBHnxEo2OIddayrxZr", "partTraitPart");
+				_validateAndAddCopulaAttributumSignifier ("grox:SW6KX6Y8QRKPpzEoJYoAD4Ya", "partTraitGen");
+				_validateAndAddCopulaAttributumSignifier ("grox:Ov4ItKWDuLMVUAlrbDfgBXkW", "genTraitPart");
+				_validateAndAddCopulaAttributumSignifier ("grox:WW6JqN8iMmQcvwrRYxDub7N7", "genTraitGen");
+				
+				// the symmetric copulas of existence (situation of a particular in a domain)
+				_validateAndAddCopulaAttributumSignifier ( "grox:VW4TIqnPANbf73SKLB1pXWr0", "partWrtTopDomain");
+				_validateAndAddCopulaAttributumSignifier ("grox:mi1vJ1s5GHf2dD8lswGIyddE", "topDomainWrtPart", );
 
 				// TODO: logic for these
 				// hasTrait is asymmetric
@@ -133,9 +131,9 @@ grox.Grammar =
 				return _signature.addNamespace(prefix, URI);
 			}
 
-			this.addSignifier = function(QName, prefLabel)
+			this.addSignifier = function(QName, prefLabel, signifierType)
 			{
-				return _signature.addSignifier(QName, prefLabel);
+				return _signature.addSignifier(QName, prefLabel, signifierType);
 			}
 
 			this.getSignifier = function(signifierId)
@@ -143,6 +141,11 @@ grox.Grammar =
 				return _signature.getSignifier(signifierId);
 			}
 
+			this.getSignifiersForPrefLabel = function(prefLabel)
+			{
+				return _signature.getSignifiersForPrefLabel(prefLabel);
+			}
+			
 			this.addAxiom = function(nomen, copula, attributum, altCopulaLabel)
 			{
 				return _signature.addAxiom(nomen, copula, attributum, altCopulaLabel);
@@ -150,10 +153,16 @@ grox.Grammar =
 
 			this.getAxiomsWithLiteralAsAttributum = function(literal)
 			{
-				_signature.getAxiomsWithLiteralAsAttributum(literal);
+				return _signature.getAxiomsWithLiteralAsAttributum(literal);
+			}
+
+			this.getSignifierParticipationEnum = function () 
+			{
+				return _signature.getSignifierParticipationEnum();
 			}
 
 			// constructor code for Grammar, which runs once when the object is instantiated with "new Grammar()"
+			if (!signature) {throw new Error ("new Grammar() is missing required argument: signature"); }
 			if (grox.isTypeOfSignature(signature)) 
 			{
 					_signature = signature;
@@ -162,7 +171,7 @@ grox.Grammar =
 			}
 
 			_addSemanticWebNamespaces();
-			_addCoreCopulaOnlySignifiers();
+			_addCoreSignifiers();
 		}
 	}
 )();
@@ -226,5 +235,28 @@ grox.Grammar.prototype =
 			});	
 		}
 	}
-
 };
+
+// utility functions in the grox namespace
+grox.isTypeOfGrammar = function (testValue)
+{
+	if (
+		testValue == undefined ||
+		typeof testValue != "object" ||
+		testValue.addNamespace == undefined || 
+		testValue.addSignifier == undefined || 
+		testValue.getSignifier == undefined ||
+		testValue.addAxiom == undefined ||
+		testValue.getAxiomsWithLiteralAsAttributum == undefined ||
+		testValue.getSignifierParticipationEnum == undefined ||
+		testValue.getSignifiersForPrefLabel == undefined
+		)
+	{
+		return false;
+	} 
+	else 
+	{
+		return true;
+	}
+}
+

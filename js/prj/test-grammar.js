@@ -5,7 +5,7 @@
 function testGrammar()
 {
 	let signature = new grox.Signature();
-	let grammar = new grox.Grammar(signature);
+	let grammar = new grox.Grammar(signature);	
 
 	grammar.logSignifier("rdf:type");
 	grammar.logSignifier("grox:hasTrait");
@@ -24,6 +24,9 @@ function testGrammar()
 	grammar.logSignifier("grox:WW6JqN8iMmQcvwrRYxDub7N7");
 	grammar.logSignifier("grox:VW4TIqnPANbf73SKLB1pXWr0");
 	grammar.logSignifier("grox:mi1vJ1s5GHf2dD8lswGIyddE");
+
+	console.log("test Categorization --------------------");
+	let categorization = new grox.Categorization(grammar);
 
 }
 
