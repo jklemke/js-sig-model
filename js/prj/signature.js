@@ -11,6 +11,8 @@ grox.Signature =
 	function() 
 	{
 		// private static attribute (defined once and shared by all Signature objects)
+		// TODO: I'm thinking this was a mistake, better to just let any signifier sit in any position.
+		// but leave it her for the time being
 		const _signifierParticipationEnum = {
 			NOMEN:	1,
 			COPULA:	2,
@@ -109,7 +111,7 @@ grox.Signature =
 						if (QName.indexOf(":") == QName.length - 1)	{throw new Error("When adding a signifier, at least one additional character must follow the colon in QName string.");} 				
 						
 						if (signifierParticipation != undefined) {
-							if (!signifierParticipation) {throw new Error("When adding a signifier, if signifierType is specified it must be a signifierType enumeration.");}	
+							if (!signifierParticipation) {throw new Error("When adding a signifier, if signifierParticipationType is specified it must be a signifierParticipationTypeEnum.");}	
 							_signifierParticipation = signifierParticipation;
 						}
 
@@ -138,123 +140,123 @@ grox.Signature =
 			(
 				function () 
 				{
-					return function(Nomen, Copula, Attributum, altCopulaLabel) 
+					return function(nomen, copula, attributum, altCopulaLabel) 
 
 					{
 						// private to each _Axiom instance
 						// Axiom is immutable, there are only getter methods for these
-						let _Nomen;
-						let _Copula;
-						let _AttributumSignifier;
-						let _AttributumLiteral;
-						let _CopulaLabel;
+						let _nomen;
+						let _copula;
+						let _attributumSignifier;
+						let _attributumLiteral;
+						let _copulaLabel;
 
 						// public _Axiom methods
 						this.getNomen = function() 
 						{
-							return _Nomen;
+							return _nomen;
 						};
 			
 						this.getCopula = function() 
 						{
-							return _Copula;
+							return _copula;
 						};
 			
 						this.getCopulaLabel = function() 
 						{
-							return _CopulaLabel;
+							return _copulaLabel;
 						};
 			
 						this.getAttributum = function() 
 						{
-							if (_AttributumSignifier) {return _AttributumSignifier;}
-							if (_AttributumLiteral) {return _AttributumLiteral;}							
+							if (_attributumSignifier) {return _attributumSignifier;}
+							if (_attributumLiteral) {return _attributumLiteral;}
 						};
-			
-						// _Axiom constructor code
-						if (grox.isTypeOfSignifier(Nomen))
-						{
-							_Nomen = Nomen;
-						} 
-						if (!_Nomen) 
-						{
-							var testNomen = _thisSignature.getSignifier(Nomen);
-							if (testNomen) {_Nomen = testNomen;}
+
+						// _Axiom constructor 
+						// TODO: should we automaticaly create new signifiers?  or should we fail if they don't exist?
+						if (grox.verifyPropertiesOnSignifierType(nomen)) {
+							_nomen = nomen;
 						}
-						if (!_Nomen)
+						if (!_nomen) 
 						{
-							if (typeof Nomen == 'string')
+							var testNomen = _thisSignature.getSignifier(nomen);
+							if (testNomen) {_nomen = testNomen;}
+						}
+						if (!_nomen)
+						{
+							if (typeof nomen == 'string')
 							{
-								_Nomen = _thisSignature.addSignifier(Nomen);
+								_nomen = _thisSignature.addSignifier(nomen);
 							}
 						}
-						if (!_Nomen) {throw new Error("Invalid Nomen for new Axiom, " + Nomen + ".");}
+						if (!_nomen) {throw new Error("Invalid Nomen for new Axiom, " + nomen + ".");}
 						
-						if (grox.isTypeOfSignifier(Copula)) 
+						if (grox.verifyPropertiesOnSignifierType(copula)) 
 						{
-							_Copula = Copula;
-						} 
-						if (!_Copula) 
-						{
-							var testCopula = _thisSignature.getSignifier(Copula);
-							if (testCopula) {_Copula = testCopula;}
+							_copula = copula;
 						}
-						if (!_Copula)
+						if (!_copula)
 						{
-							if (typeof Copula == 'string')
+							var testCopula = _thisSignature.getSignifier(copula);
+							if (testCopula) {_copula = testCopula;}
+						}
+						if (!_copula)
+						{
+							if (typeof copula == 'string')
 							{
-								_Copula = _thisSignature.addSignifier(Copula, altCopulaLabel );
+								_copula = _thisSignature.addSignifier(copula, altCopulaLabel );
 							}
 						}
-						if (!_Copula) {throw new Error("Invalid Copula for new Axiom, " + Copula + ".");}
+						if (!_copula) {throw new Error("Invalid Copula for new Axiom, " + copula + ".");}
 			
-						if (grox.isTypeOfSignifier(Attributum)) 
+						if (grox.verifyPropertiesOnSignifierType(attributum)) 
 						{
-							_AttributumSignifier = Attributum;
+							_attributumSignifier = attributum;
 						} 
-						if (!_AttributumSignifier) 
+						if (!_attributumSignifier) 
 						{
-							var testAttributum = _thisSignature.getSignifier(Attributum);
-							if (testAttributum) {_AttributumSignifier = testAttributum;}
+							var testAttributum = _thisSignature.getSignifier(attributum);
+							if (testAttributum) {_attributumSignifier = testAttributum;}
 						}
-						if (!_AttributumSignifier)
+						if (!_attributumSignifier)
 						{
 							// if Attributum string has one colon, assume the caller wants it to be a new Signifier
-							if (typeof Attributum == 'string' && Attributum.indexOf(":") >= 0 && Attributum.lastIndexOf(":") == Attributum.indexOf(":"))
+							if (typeof attributum == 'string' && attributum.indexOf(":") >= 0 && attributum.lastIndexOf(":") == attributum.indexOf(":"))
 							{
-								_AttributumSignifier = _thisSignature.addSignifier(Attributum);
+								_attributumSignifier = _thisSignature.addSignifier(attributum);
 							}
 						}
-						if (!_AttributumSignifier) 
+						if (!_attributumSignifier) 
 						{
 							// if Attributum string is any other string, then store it as a string literal
-							if (typeof Attributum == 'string')
-							_AttributumLiteral = Attributum;
+							if (typeof attributum == 'string')
+							_attributumLiteral = attributum;
 						}
-						if (!_AttributumSignifier && !_AttributumLiteral) {throw new Error("Invalid Attributum for new Axiom, " + Attributum + ".");}
+						if (!_attributumSignifier && !_attributumLiteral) {throw new Error("Invalid Attributum for new Axiom, " + attributum + ".");}
 			
-						_CopulaLabel = _constructCopulaLabel(_Copula,altCopulaLabel);
+						_copulaLabel = _constructCopulaLabel(_copula,altCopulaLabel);
 			
-						_Nomen.notifyOfParticipationAsNomen(this);
-						_Copula.notifyOfParticipationAsCopula(this);
-						if (grox.isTypeOfSignifier(_AttributumSignifier)) 
+						_nomen.notifyOfParticipationAsNomen(this);
+						_copula.notifyOfParticipationAsCopula(this);
+						if (grox.verifyPropertiesOnSignifierType(_attributumSignifier)) 
 						{
-							_AttributumSignifier.notifyOfParticipationAsAttributum(this);
+							_attributumSignifier.notifyOfParticipationAsAttributum(this);
 						}
 					}
 			
-					function _constructCopulaLabel(Copula, altCopulaLabel)
+					function _constructCopulaLabel(copula, altCopulaLabel)
 					{
-						let CopulaLabel;
+						let copulaLabel;
 						if(altCopulaLabel != undefined && (typeof altCopulaLabel) == "string") 
 						{
-							CopulaLabel = altCopulaLabel;
+							copulaLabel = altCopulaLabel;
 						} 
-						else if(grox.isTypeOfSignifier(Copula))
+						else if(grox.verifyPropertiesOnSignifierType(copula))
 						{
-							CopulaLabel = Copula.getPrefLabel();
+							copulaLabel = copula.getPrefLabel();
 						}
-						return CopulaLabel;
+						return copulaLabel;
 					}
 				}
 			)();
@@ -272,25 +274,25 @@ grox.Signature =
 					if (signifierParticipation) {
 						switch (signifierParticipation) {
 							case _signifierParticipationEnum.NOMEN:
-								msg = msg + ", signifierType = " + "NOMEN";
+								msg = msg + ", signifierParticipationType = " + "NOMEN";
 								break;
 							case _signifierParticipationEnum.COPULA:
-								msg = msg + ", signifierType = " + "COPULA";
+								msg = msg + ", signifierParticipationType = " + "COPULA";
 								break;
 							case _signifierParticipationEnum.NOMEN_COPULA:
-								msg = msg + ", signifierType = " + "NOMEN_COPULA";
+								msg = msg + ", signifierParticipationType = " + "NOMEN_COPULA";
 								break;
 							case _signifierParticipationEnum.ATTRIBUTUM:
-								msg = msg + ", signifierType = " + "ATTRIBUTUM";
+								msg = msg + ", signifierParticipationType = " + "ATTRIBUTUM";
 								break;
 							case _signifierParticipationEnum.NOMEN_ATTRIBUTUM:
-								msg = msg + ", signifierType = " + "NOMEN_ATTRIBUTUM";
+								msg = msg + ", signifierParticipationType = " + "NOMEN_ATTRIBUTUM";
 								break;
 							case _signifierParticipationEnum.COPULA_ATTRIBUTUM:
-								msg = msg + ", signifierType = " + "COPULA_ATTRIBUTUM";
+								msg = msg + ", signifierParticipationType = " + "COPULA_ATTRIBUTUM";
 								break;
 							case _signifierParticipationEnum.NOMEN_COPULA_ATTRIBUTUM:
-								msg = msg + ", signifierType = " + "NOMEN_COPULA_ATTRIBUTUM";
+								msg = msg + ", signifierParticipationType = " + "NOMEN_COPULA_ATTRIBUTUM";
 								break;
 						}						
 					}
@@ -306,7 +308,7 @@ grox.Signature =
 				{
 					let msg	= "Nomen	" + this.getNomen().getPrefLabel() + "\nCopula	" + this.getCopula().getPrefLabel()	+ "\nAttributum	";
 					let testAttributum = this.getAttributum();
-					if (grox.isTypeOfSignifier(testAttributum))
+					if (grox.verifyPropertiesOnSignifierType(testAttributum))
 					{
 						msg += testAttributum.getPrefLabel();
 					}
@@ -329,12 +331,12 @@ grox.Signature =
 				return newNamespace;
 			}
 
-			this.addSignifier = function(QName, prefLabel, signifierType)
+			this.addSignifier = function(QName, prefLabel, signifierParticipationType)
 			{
 				if (_signifiers[QName]) {
 					return _signifiers[QName];
 				} else {
-					let newSignifier = new _Signifier(QName, prefLabel, signifierType);
+					let newSignifier = new _Signifier(QName, prefLabel, signifierParticipationType);
 					let newPrefLabel = newSignifier.getPrefLabel();
 					let newQName = newSignifier.getQName();
 					if (_prefLabels[newPrefLabel]) {
@@ -351,7 +353,7 @@ grox.Signature =
 			this.getSignifier = function(signifierId)
 			{
 				let signifier = _signifiers[signifierId];
-				if (!signifier && grox.isTypeOfSignifier(signifierId))
+				if (!signifier && grox.verifyPropertiesOnSignifierType(signifierId))
 				{
 					signifier = _signifiers[signifierId.getQName()]
 				}
@@ -401,64 +403,36 @@ grox.Signature.prototype =
 {
 }
 
-// utility functions in the grox namespace
-grox.isTypeOfSignature = function (testValue)
-{
-	if (
-		testValue == undefined ||
-		typeof testValue != "object" ||
-		testValue.addNamespace == undefined || 
-		testValue.addSignifier == undefined || 
-		testValue.getSignifier == undefined ||
-		testValue.addAxiom == undefined ||
-		testValue.getAxiomsWithLiteralAsAttributum == undefined ||
-		testValue.getSignifierParticipationEnum == undefined ||
-		testValue.getSignifiersForPrefLabel == undefined
-	)
-	{
-		return false;
-	} 
-	else 
-	{
-		return true;
-	}
+// type checking functions in grox namespace
+grox.verifyPropertiesOnSignatureType = function (testObject, failOnError) {
+	let propertyArray = [
+		"addNamespace",
+		"addSignifier",
+		"getSignifier",
+		"addAxiom",
+		"getAxiomsWithLiteralAsAttributum",
+		"getSignifierParticipationEnum",
+		"getSignifiersForPrefLabel",
+	]
+	return grox.util.verifyPropertiesOnObject(testObject, "Signature", propertyArray, failOnError);
 }
 
-grox.isTypeOfSignifier = function(testValue)
-{
-	if (
-		testValue == undefined ||
-		typeof testValue != "object" ||
-		testValue.getQName == undefined || 
-		testValue.notifyOfParticipationAsNomen == undefined || 
-		testValue.notifyOfParticipationAsCopula == undefined || 
-		testValue.notifyOfParticipationAsAttributum == undefined 
-		)
-	{
-		return false;
-	} 
-	else	
-	{
-		return true;
-	}
+grox.verifyPropertiesOnSignifierType = function (testObject, failOnError) {
+	let propertyArray = [
+		"notifyOfParticipationAsNomen",
+		"notifyOfParticipationAsCopula",
+		"notifyOfParticipationAsAttributum",
+	]
+	return grox.util.verifyPropertiesOnObject(testObject, "Signifier", propertyArray, failOnError);
 }
 
-grox.isTypeOfAxiom = function(testValue)
-{
-	if (
-		testValue == undefined ||
-		typeof testValue != "object" ||
-		testValue.getNomen == undefined || 
-		testValue.getCopula == undefined || 
-		testValue.getCopulaLabel == undefined || 
-		testValue.getAttributum == undefined 
-		)	
-	{
-		return false;
-	} 
-	else	
-	{
-		return true;
-	}
+grox.verifyPropertiesOnAxiomType = function (testObject, failOnError) {
+	let propertyArray = [
+		"getNomen",
+		"getCopula",
+		"getCopulaLabel",
+		"getAttributum",
+	];
+	return grox.util.verifyPropertiesOnObject(testObject, "Axiom", propertyArray, failOnError);
 }
 

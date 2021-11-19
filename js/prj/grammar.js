@@ -53,13 +53,12 @@ grox.Grammar =
 
 						// _GeneralizationChain constructor code
 
-
 					}
 			} 
 			)();
 
 			// _DisjointAttributum is an IIFE constructor function which is private to Grammar
-			// it tracks sets of signifiers which are not allowed to belong to the same nomen,copula pair
+			// it tracks sets of signifiers which are not allowed to belong to the same nomen & copula pair
 			let _DisjointAttributumSet = 
 			(
 				// anonymous function which returns the _DisjointAttributumSet constructor
@@ -121,21 +120,36 @@ grox.Grammar =
 					}
 					return existingDisjointSets;
 				}
+			}
 
-				/////
-/*				for (let disjointAttributumSet in _disjointAttributumSets) {
-					let attributumSet = disjointAttributumSet.getAttributumSet();
-					if (attributumSet[attributum]) {
-						existingDisjointSets.push(disjointAttributumSet);
-						break;  // TODO: correct use of break?
+			// grox.Signature allows duplicate prefLabels, but for the default signifiers in grox.Categorization we require unique prefLabels
+			let _getUniqueQNameForSignifierId = function (signifierId) {
+				let existingQNames;
+				let existingQName;
+				let numQNames = 0;
+				let existingSignifier = _grammar.getSignifier(signifierId);
+				if (existingSignifier) {
+					existingQName = existingSignifier.getQName();
+				} else {
+					let existingSignifiersForPrefLabel = _signature.getSignifiersForPrefLabel(signifierId);
+					if (existingSignifiersForPrefLabel) {
+						for (sigId in existingSignifiersForPrefLabel) {
+							existingQNames = sigId + " ";
+							numQNames++;
+						}
+						if (numQNames > 1) {
+							throw new Error("prefLabel = " + signifierId + " has been used for multiple QNames = " + existingQNames );
+						} else {
+							existingQName = existingQNames.trim();
+						}
 					}
-					return existingDisjointSets;
-				}*/
+				}
+				return existingQName;
 			}
 
 			// grox.Signature allows duplicate prefLabels, but for the default signifiers in grox.Grammar we do not allow duplicate prefLabels
 			let _checkForDuplicatePrefLabels = function (prefLabel) {
-				let existingSignifiersForPrefLabel = signature.getSignifiersForPrefLabel(prefLabel);
+				let existingSignifiersForPrefLabel = _signature.getSignifiersForPrefLabel(prefLabel);
 				if (existingSignifiersForPrefLabel) {
 					let existingQNames;
 					for (sigId in existingSignifiersForPrefLabel) {
@@ -215,7 +229,7 @@ grox.Grammar =
 				_disjointAttributumSets.push(disjointAttributumSet);
 			}
 
-			this.getDisjointAttributumSetForAttributum = function(signifierId)
+			this.getDisjointAttributumSetForAttributum = function(attributum)
 			{
 
 			}
@@ -225,9 +239,9 @@ grox.Grammar =
 				return _signature.addNamespace(prefix, URI);
 			}
 
-			this.addSignifier = function(QName, prefLabel, signifierType)
+			this.addSignifier = function(QName, prefLabel, signifierParticipationType)
 			{
-				return _signature.addSignifier(QName, prefLabel, signifierType);
+				return _signature.addSignifier(QName, prefLabel, signifierParticipationType);
 			}
 
 			this.getSignifier = function(signifierId)
@@ -235,11 +249,12 @@ grox.Grammar =
 				return _signature.getSignifier(signifierId);
 			}
 
-			this.getSignifiersForPrefLabel = function(prefLabel)
+			// signifierId can be a QName, a reference to a Signifier Object, or a uniquely-enforced prefLabel
+			this.getUniqueQNameForSignifierId = function(signifierId)
 			{
-				return _signature.getSignifiersForPrefLabel(prefLabel);
+				return _getUniqueQNameForSignifierId(signifierId);
 			}
-			
+
 			this.addAxiom = function(nomen, copula, attributum, altCopulaLabel)
 			{
 				let nomenSig = _signature.getSignifier(nomen);
@@ -357,26 +372,17 @@ grox.Grammar.prototype =
 	}
 };
 
-// utility functions in the grox namespace
-grox.isTypeOfGrammar = function (testValue)
-{
-	if (
-		testValue == undefined ||
-		typeof testValue != "object" ||
-		testValue.addNamespace == undefined || 
-		testValue.addSignifier == undefined || 
-		testValue.getSignifier == undefined ||
-		testValue.addAxiom == undefined ||
-		testValue.getAxiomsWithLiteralAsAttributum == undefined ||
-		testValue.getSignifierParticipationEnum == undefined ||
-		testValue.getSignifiersForPrefLabel == undefined
-		)
-	{
-		return false;
-	} 
-	else 
-	{
-		return true;
-	}
+// type checking functions in grox namespace
+grox.verifyPropertiesOnGrammarType = function (testObject, isFailOnError) {
+	let propertyArray = [
+		"testValue.addNamespace",
+		"testValue.addSignifier",
+		"testValue.getSignifier",
+		"testValue.addAxiom",
+		"testValue.getAxiomsWithLiteralAsAttributum",
+		"testValue.getSignifierParticipationEnum",
+		"testValue.getSignifiersForPrefLabel",
+	];
+	return grox.util.verifyPropertiesOnObject(testObject, "Grammar", propertyArray);
 }
 

@@ -20,34 +20,10 @@ grox.Categorization =
 			let _grammar;
 
 			// private methods, unique to each Categorization instance, with access to private attributes and methods
-			// grox.Signature allows duplicate prefLabels, but for the default signifiers in grox.Categorization we require unique prefLabels
-			let _getUniqueQNameForSignifierId = function (signifierId) {
-				let existingQNames;
-				let existingQName;
-				let numQNames = 0;
-				let existingSignifier = _grammar.getSignifier(signifierId);
-				if (existingSignifier) {
-					existingQName = existingSignifier.getQName();
-				} else {
-					let existingSignifiersForPrefLabel = _grammar.getSignifiersForPrefLabel(signifierId);
-					if (existingSignifiersForPrefLabel) {
-						for (sigId in existingSignifiersForPrefLabel) {
-							existingQNames = sigId + " ";
-							numQNames++;
-						}
-						if (numQNames > 1) {
-							throw new Error("prefLabel = " + signifierId + " has been used for multiple QNames = " + existingQNames );
-						} else {
-							existingQName = existingQNames.trim();
-						}
-					}
-				}
-				return existingQName;
-			}
 
 			let _validateAndAddCategorizationAxioms = function (QName, prefLabel, attributum) {
-				let attributumQName = _getUniqueQNameForSignifierId(attributum);
-				let copulaQName = _getUniqueQNameForSignifierId("isSubTraitOf"); 
+				let attributumQName = _grammar.getUniqueQNameForSignifierId(attributum);
+				let copulaQName = _grammar.getUniqueQNameForSignifierId("isSubTraitOf"); 
 				_grammar.addSignifier(QName, prefLabel, _grammar.getSignifierParticipationEnum().NOMEN_COPULA_ATTRIBUTUM);  
 				_grammar.addAxiom(QName, copulaQName, attributumQName, prefLabel);
 			}
