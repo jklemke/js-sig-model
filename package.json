@@ -1,0 +1,23 @@
+{
+  "name": "js-sig-model",
+  "version": "0.0.0",
+  "description": "JavaScript library for experimenting with RDF, OWL, model theory, description logic, inference",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jklemke/js-sig-model.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jklemke/js-sig-model/issues"
+  },
+  "homepage": "https://github.com/jklemke/js-sig-model#readme",
+  "devDependencies": {
+    "jest": "^27.3.1"
+  }
+}

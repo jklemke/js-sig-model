@@ -436,3 +436,11 @@ grox.verifyPropertiesOnAxiomType = function (testObject, failOnError) {
 	return grox.util.verifyPropertiesOnObject(testObject, "Axiom", propertyArray, failOnError);
 }
 
+function sum(a, b) {
+  return a + b;
+}
+
+module.exports = grox;
+
+
+
