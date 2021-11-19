@@ -127,7 +127,7 @@ grox.Grammar =
 				let existingQNames;
 				let existingQName;
 				let numQNames = 0;
-				let existingSignifier = _grammar.getSignifier(signifierId);
+				let existingSignifier = _signature.getSignifier(signifierId);
 				if (existingSignifier) {
 					existingQName = existingSignifier.getQName();
 				} else {
@@ -298,11 +298,9 @@ grox.Grammar =
 
 			// constructor code for Grammar, which runs once when the object is instantiated with "new Grammar()"
 			if (!signature) {throw new Error ("new Grammar() is missing required argument: signature"); }
-			if (grox.isTypeOfSignature(signature)) 
+			if (grox.verifyPropertiesOnSignatureType(signature, "fail"))
 			{
 					_signature = signature;
-			} else {
-				{throw new Error("Invalid signature object for new Grammar(), " + signature + ".");}
 			}
 
 			_addCoreNamespaces();
@@ -373,16 +371,16 @@ grox.Grammar.prototype =
 };
 
 // type checking functions in grox namespace
-grox.verifyPropertiesOnGrammarType = function (testObject, isFailOnError) {
+grox.verifyPropertiesOnGrammarType = function (testObject, failOnError) {
 	let propertyArray = [
-		"testValue.addNamespace",
-		"testValue.addSignifier",
-		"testValue.getSignifier",
-		"testValue.addAxiom",
-		"testValue.getAxiomsWithLiteralAsAttributum",
-		"testValue.getSignifierParticipationEnum",
-		"testValue.getSignifiersForPrefLabel",
+		"addNamespace",
+		"addSignifier",
+		"getSignifier",
+		"addAxiom",
+		"getAxiomsWithLiteralAsAttributum",
+		"getSignifierParticipationEnum",
+		"getUniqueQNameForSignifierId",
 	];
-	return grox.util.verifyPropertiesOnObject(testObject, "Grammar", propertyArray);
+	return grox.util.verifyPropertiesOnObject(testObject, "Grammar", propertyArray, failOnError);
 }
 

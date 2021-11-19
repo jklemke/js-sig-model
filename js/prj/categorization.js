@@ -44,11 +44,10 @@ grox.Categorization =
 
 			// constructor code for Categorization, which runs once when the object is instantiated with "new Categorization()"
 			if (!grammar) {throw new Error ("new Categorization() is missing required argument: grammar"); }
-			if (grox.isTypeOfGrammar(grammar)) 
+
+			if (grox.verifyPropertiesOnGrammarType(grammar, "fail"))
 			{
 				_grammar = grammar;
-			} else {
-				{throw new Error("Invalid grammar object for new Categorization(), " + grammar + ".");}
 			}
 
 			_addCategorizationSignifiers();
