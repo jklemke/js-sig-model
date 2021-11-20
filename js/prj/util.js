@@ -51,4 +51,54 @@ grox.util.verifyPropertiesOnObject = function (testObject, objectName, propertyA
 	return isSuccess;
 }
 
+// type checking functions in grox namespace
+grox.util.verifyPropertiesOnSignatureType = function (testObject, failOnError) {
+	let propertyArray = [
+		"addNamespace",
+		"addSignifier",
+		"getSignifier",
+		"addAxiom",
+		"getAxiomsWithLiteralAsAttributum",
+		"getSignifierParticipationEnum",
+		"getSignifiersForPrefLabel",
+	]
+	return grox.util.verifyPropertiesOnObject(testObject, "Signature", propertyArray, failOnError);
+}
+
+grox.util.verifyPropertiesOnSignifierType = function (testObject, failOnError) {
+	let propertyArray = [
+		"notifyOfParticipationAsNomen",
+		"notifyOfParticipationAsCopula",
+		"notifyOfParticipationAsAttributum",
+	]
+	return grox.util.verifyPropertiesOnObject(testObject, "Signifier", propertyArray, failOnError);
+}
+
+grox.util.verifyPropertiesOnAxiomType = function (testObject, failOnError) {
+	let propertyArray = [
+		"getNomen",
+		"getCopula",
+		"getCopulaLabel",
+		"getAttributum",
+	];
+	return grox.util.verifyPropertiesOnObject(testObject, "Axiom", propertyArray, failOnError);
+}
+
+// type checking functions in grox namespace
+grox.util.verifyPropertiesOnGrammarType = function (testObject, failOnError) {
+	let propertyArray = [
+		"addNamespace",
+		"addSignifier",
+		"getSignifier",
+		"addAxiom",
+		"getAxiomsWithLiteralAsAttributum",
+		"getSignifierParticipationEnum",
+		"getUniqueQNameForSignifierId",
+	];
+	return grox.util.verifyPropertiesOnObject(testObject, "Grammar", propertyArray, failOnError);
+}
+
+
+module.exports = grox;
+
 

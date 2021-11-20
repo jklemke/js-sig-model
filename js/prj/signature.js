@@ -1,5 +1,6 @@
 // Copyright 2021,	Joe Klemke, Grox LLC
 // Distributed under GNU LESSER GENERAL PUBLIC LICENSE, http://www.gnu.org/licenses/lgpl.txt
+const { util } = require('../prj/util');
 
 // top level grox namespace
 var grox = grox || {};
@@ -175,7 +176,7 @@ grox.Signature =
 
 						// _Axiom constructor 
 						// TODO: should we automaticaly create new signifiers?  or should we fail if they don't exist?
-						if (grox.verifyPropertiesOnSignifierType(nomen)) {
+						if (util.verifyPropertiesOnSignifierType(nomen)) {
 							_nomen = nomen;
 						}
 						if (!_nomen) 
@@ -192,7 +193,7 @@ grox.Signature =
 						}
 						if (!_nomen) {throw new Error("Invalid Nomen for new Axiom, " + nomen + ".");}
 						
-						if (grox.verifyPropertiesOnSignifierType(copula)) 
+						if (util.verifyPropertiesOnSignifierType(copula)) 
 						{
 							_copula = copula;
 						}
@@ -210,7 +211,7 @@ grox.Signature =
 						}
 						if (!_copula) {throw new Error("Invalid Copula for new Axiom, " + copula + ".");}
 			
-						if (grox.verifyPropertiesOnSignifierType(attributum)) 
+						if (util.verifyPropertiesOnSignifierType(attributum)) 
 						{
 							_attributumSignifier = attributum;
 						} 
@@ -239,7 +240,7 @@ grox.Signature =
 			
 						_nomen.notifyOfParticipationAsNomen(this);
 						_copula.notifyOfParticipationAsCopula(this);
-						if (grox.verifyPropertiesOnSignifierType(_attributumSignifier)) 
+						if (util.verifyPropertiesOnSignifierType(_attributumSignifier)) 
 						{
 							_attributumSignifier.notifyOfParticipationAsAttributum(this);
 						}
@@ -252,7 +253,7 @@ grox.Signature =
 						{
 							copulaLabel = altCopulaLabel;
 						} 
-						else if(grox.verifyPropertiesOnSignifierType(copula))
+						else if(util.verifyPropertiesOnSignifierType(copula))
 						{
 							copulaLabel = copula.getPrefLabel();
 						}
@@ -308,7 +309,7 @@ grox.Signature =
 				{
 					let msg	= "Nomen	" + this.getNomen().getPrefLabel() + "\nCopula	" + this.getCopula().getPrefLabel()	+ "\nAttributum	";
 					let testAttributum = this.getAttributum();
-					if (grox.verifyPropertiesOnSignifierType(testAttributum))
+					if (util.verifyPropertiesOnSignifierType(testAttributum))
 					{
 						msg += testAttributum.getPrefLabel();
 					}
@@ -353,7 +354,7 @@ grox.Signature =
 			this.getSignifier = function(signifierId)
 			{
 				let signifier = _signifiers[signifierId];
-				if (!signifier && grox.verifyPropertiesOnSignifierType(signifierId))
+				if (!signifier && util.verifyPropertiesOnSignifierType(signifierId))
 				{
 					signifier = _signifiers[signifierId.getQName()]
 				}
@@ -401,43 +402,6 @@ grox.Signature =
 
 grox.Signature.prototype = 
 {
-}
-
-// type checking functions in grox namespace
-grox.verifyPropertiesOnSignatureType = function (testObject, failOnError) {
-	let propertyArray = [
-		"addNamespace",
-		"addSignifier",
-		"getSignifier",
-		"addAxiom",
-		"getAxiomsWithLiteralAsAttributum",
-		"getSignifierParticipationEnum",
-		"getSignifiersForPrefLabel",
-	]
-	return grox.util.verifyPropertiesOnObject(testObject, "Signature", propertyArray, failOnError);
-}
-
-grox.verifyPropertiesOnSignifierType = function (testObject, failOnError) {
-	let propertyArray = [
-		"notifyOfParticipationAsNomen",
-		"notifyOfParticipationAsCopula",
-		"notifyOfParticipationAsAttributum",
-	]
-	return grox.util.verifyPropertiesOnObject(testObject, "Signifier", propertyArray, failOnError);
-}
-
-grox.verifyPropertiesOnAxiomType = function (testObject, failOnError) {
-	let propertyArray = [
-		"getNomen",
-		"getCopula",
-		"getCopulaLabel",
-		"getAttributum",
-	];
-	return grox.util.verifyPropertiesOnObject(testObject, "Axiom", propertyArray, failOnError);
-}
-
-function sum(a, b) {
-  return a + b;
 }
 
 module.exports = grox;

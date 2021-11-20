@@ -1,5 +1,8 @@
 // Copyright 2021,	Joe Klemke, GROX LLC
 // Distributed under GNU LESSER GENERAL PUBLIC LICENSE, http://www.gnu.org/licenses/lgpl.txt
+//const { grox } = require('../prj/signature');
+const { Signature } = require('../prj/signature');
+const { util } = require('../prj/util');
 
 // top level namespace
 var grox = grox || {};
@@ -298,7 +301,7 @@ grox.Grammar =
 
 			// constructor code for Grammar, which runs once when the object is instantiated with "new Grammar()"
 			if (!signature) {throw new Error ("new Grammar() is missing required argument: signature"); }
-			if (grox.verifyPropertiesOnSignatureType(signature, "fail"))
+			if (util.verifyPropertiesOnSignatureType(signature, "fail"))
 			{
 					_signature = signature;
 			}
@@ -370,17 +373,4 @@ grox.Grammar.prototype =
 	}
 };
 
-// type checking functions in grox namespace
-grox.verifyPropertiesOnGrammarType = function (testObject, failOnError) {
-	let propertyArray = [
-		"addNamespace",
-		"addSignifier",
-		"getSignifier",
-		"addAxiom",
-		"getAxiomsWithLiteralAsAttributum",
-		"getSignifierParticipationEnum",
-		"getUniqueQNameForSignifierId",
-	];
-	return grox.util.verifyPropertiesOnObject(testObject, "Grammar", propertyArray, failOnError);
-}
-
+module.exports = grox;
